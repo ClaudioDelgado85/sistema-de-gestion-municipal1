@@ -11,16 +11,19 @@ export const shouldNotifyDeadline = (
   task: Task,
   notifiedKeys: Set<string>
 ): boolean => {
+  if (!task || !task.tipo_acta || !task.plazo || !task.estado) {
+    return false;
+  }
+
   if (
-    task.tipoActa !== 'intimacion' ||
-    !task.plazo ||
+    task.tipo_acta !== 'intimacion' ||
     task.estado !== 'pendiente'
   ) {
     return false;
   }
 
   const deadlineDate = parseISO(task.plazo);
-  const notificationKey = createNotificationKey(task.id, new Date());
+  const notificationKey = createNotificationKey(task.id.toString(), new Date());
   
   return isToday(deadlineDate) && !notifiedKeys.has(notificationKey);
 };
@@ -29,12 +32,18 @@ export const createTaskNotification = (
   task: Task,
   type: NotificationType,
   title: string
-) => ({
-  title,
-  message: `La tarea ${task.numeroActa} para ${task.infractor.nombre} ${
-    type === 'warning' ? 'vence hoy' : 'ha vencido'
-  }.`,
-  type,
-  relatedItemId: task.id,
-  relatedItemType: 'task' as const
-});
+) => {
+  if (!task || !task.numero_acta || !task.infractor_nombre) {
+    throw new Error('La tarea no tiene todos los campos necesarios para crear una notificación');
+  }
+
+  return {
+    title,
+    message: `La tarea ${task.numero_acta} para ${task.infractor_nombre} ${
+      type === 'warning' ? 'vence hoy' : 'está retrasada'
+    }.`,
+    type,
+    relatedItemId: task.id.toString(),
+    relatedItemType: 'task' as const
+  };
+};

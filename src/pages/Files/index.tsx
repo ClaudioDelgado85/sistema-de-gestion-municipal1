@@ -1,25 +1,41 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Plus } from 'lucide-react';
+import { File, FileFormData } from '../../types/file';
 import { useFileStore } from '../../store/files';
 import FileList from '../../components/files/FileList';
 import FileForm from '../../components/files/FileForm';
 import FileSearch from '../../components/files/FileSearch';
-import { File } from '../../types/file';
 
 function Files() {
   const [showForm, setShowForm] = useState(false);
   const [editingFile, setEditingFile] = useState<File | null>(null);
-  const { addFile, updateFile, deleteFile, getFilteredFiles } = useFileStore();
+  const { addFile, updateFile, deleteFile, getFilteredFiles, fetchFiles } = useFileStore();
   const filteredFiles = getFilteredFiles();
 
-  const handleSubmit = (data: any) => {
-    if (editingFile) {
-      updateFile(editingFile.id, data);
-    } else {
-      addFile(data);
+  useEffect(() => {
+    console.log('Files - Iniciando fetchFiles');
+    fetchFiles().catch(error => {
+      console.error('Error al cargar expedientes:', error);
+    });
+  }, [fetchFiles]);
+
+  console.log('Files - filteredFiles:', filteredFiles);
+
+  const handleSubmit = async (data: FileFormData) => {
+    try {
+      if (editingFile) {
+        console.log('Files - Actualizando expediente:', editingFile.id, data);
+        await updateFile(editingFile.id, data);
+      } else {
+        console.log('Files - Creando nuevo expediente:', data);
+        await addFile(data);
+      }
+      setShowForm(false);
+      setEditingFile(null);
+    } catch (error) {
+      console.error('Error al guardar expediente:', error);
+      alert('Error al guardar el expediente');
     }
-    setShowForm(false);
-    setEditingFile(null);
   };
 
   const handleEdit = (file: File) => {
@@ -27,9 +43,14 @@ function Files() {
     setShowForm(true);
   };
 
-  const handleDelete = (id: string) => {
+  const handleDelete = async (id: number) => {
     if (window.confirm('¿Está seguro de que desea eliminar este expediente?')) {
-      deleteFile(id);
+      try {
+        await deleteFile(id);
+      } catch (error) {
+        console.error('Error:', error);
+        alert('Error al eliminar el expediente');
+      }
     }
   };
 

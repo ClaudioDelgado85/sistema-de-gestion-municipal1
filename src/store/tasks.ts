@@ -1,13 +1,13 @@
 import { create } from 'zustand';
 import { Task, TaskFormData, TaskStatus } from '../types/task';
-import { MOCK_TASKS } from '../mocks/tasks';
+import { taskService } from '../services/api';
 
 interface TaskFilters {
   status: string[];
   type: string[];
   dateRange: {
     start: string | null;
-    end: string | null;
+    end: null;
   };
 }
 
@@ -22,14 +22,15 @@ interface TaskState {
   sortConfig: SortConfig;
   setFilters: (filters: Partial<TaskFilters>) => void;
   setSortConfig: (config: SortConfig) => void;
-  addTask: (task: TaskFormData) => void;
-  updateTask: (id: string, task: TaskFormData) => void;
+  fetchTasks: () => Promise<void>;
+  addTask: (task: TaskFormData) => Promise<void>;
+  updateTask: (id: number, task: TaskFormData) => Promise<void>;
+  deleteTask: (id: number) => Promise<void>;
   updateTaskStatus: (params: {
-    taskId: string;
+    taskId: number;
     newStatus: TaskStatus;
     observaciones: string;
-    usuario: string;
-  }) => void;
+  }) => Promise<void>;
 }
 
 const initialFilters: TaskFilters = {
@@ -42,7 +43,7 @@ const initialFilters: TaskFilters = {
 };
 
 export const useTaskStore = create<TaskState>((set) => ({
-  tasks: MOCK_TASKS,
+  tasks: [],
   filters: initialFilters,
   sortConfig: { key: null, direction: 'asc' },
 
@@ -56,55 +57,89 @@ export const useTaskStore = create<TaskState>((set) => ({
       sortConfig: config,
     })),
 
-  addTask: (taskData) =>
-    set((state) => ({
-      tasks: [
-        ...state.tasks,
-        {
-          ...taskData,
-          id: Date.now().toString(),
-          estado: 'pendiente',
-          creadoPor: 'usuario_actual',
-          historialEstados: [],
-        },
-      ],
-    })),
+  fetchTasks: async () => {
+    try {
+      const tasks = await taskService.getAll();
+      set({ tasks: tasks as Task[] });
+    } catch (error) {
+      console.error('Error al obtener tareas:', error);
+      throw error;
+    }
+  },
 
-  updateTask: (id, taskData) =>
-    set((state) => ({
-      tasks: state.tasks.map((task) =>
-        task.id === id
-          ? {
-              ...task,
-              ...taskData,
-            }
-          : task
-      ),
-    })),
+  addTask: async (taskData) => {
+    try {
+      const newTask = await taskService.create(taskData);
+      set((state) => ({
+        tasks: [newTask as Task, ...state.tasks],
+      }));
+    } catch (error) {
+      console.error('Error al crear tarea:', error);
+      throw error;
+    }
+  },
 
-  updateTaskStatus: ({ taskId, newStatus, observaciones, usuario }) =>
-    set((state) => {
-      const task = state.tasks.find((t) => t.id === taskId);
-      if (!task || task.estado === newStatus) return state;
-
-      const statusChange = {
-        from: task.estado,
-        to: newStatus,
-        date: new Date().toLocaleDateString('en-CA'),  // Formato YYYY-MM-DD
-        observaciones,
-        usuario,
-      };
-
-      return {
-        tasks: state.tasks.map((t) =>
-          t.id === taskId
-            ? {
-                ...t,
-                estado: newStatus,
-                historialEstados: [...t.historialEstados, statusChange],
-              }
-            : t
+  updateTask: async (id, taskData) => {
+    try {
+      const updatedTask = await taskService.update(id, taskData);
+      set((state) => ({
+        tasks: state.tasks.map((task) =>
+          task.id === id ? (updatedTask as Task) : task
         ),
+      }));
+    } catch (error) {
+      console.error('Error al actualizar tarea:', error);
+      throw error;
+    }
+  },
+
+  deleteTask: async (id) => {
+    try {
+      await taskService.delete(id);
+      set((state) => ({
+        tasks: state.tasks.filter((task) => task.id !== id),
+      }));
+    } catch (error) {
+      console.error('Error al eliminar tarea:', error);
+      throw error;
+    }
+  },
+
+  updateTaskStatus: async ({ taskId, newStatus, observaciones }) => {
+    try {
+      // Encontrar la tarea actual en el estado
+      const currentTask = useTaskStore.getState().tasks.find(t => t.id === taskId);
+      if (!currentTask) {
+        throw new Error('Tarea no encontrada');
+      }
+
+      // Crear un objeto TaskFormData con los datos actuales y el nuevo estado
+      const updateData: TaskFormData = {
+        fecha: currentTask.fecha,
+        tipo_acta: currentTask.tipo_acta,
+        numero_acta: currentTask.numero_acta,
+        plazo: currentTask.plazo,
+        infractor_nombre: currentTask.infractor_nombre,
+        infractor_dni: currentTask.infractor_dni,
+        infractor_domicilio: currentTask.infractor_domicilio,
+        descripcion_falta: currentTask.descripcion_falta,
+        observaciones,
+        estado: newStatus,
+        expediente_id: currentTask.expediente_id
       };
-    }),
+
+      // Actualizar la tarea
+      const updatedTask = await taskService.update(taskId, updateData);
+      
+      // Actualizar el estado local
+      set((state) => ({
+        tasks: state.tasks.map((t) =>
+          t.id === taskId ? (updatedTask as Task) : t
+        ),
+      }));
+    } catch (error) {
+      console.error('Error al actualizar estado:', error);
+      throw error;
+    }
+  },
 }));

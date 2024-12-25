@@ -8,36 +8,38 @@ import { createTaskNotification } from '../utils/notifications';
 export function useTaskStatus(tasks: Task[]) {
   const updateTaskStatus = useTaskStore((state) => state.updateTaskStatus);
   const { notify } = useNotifications();
-  const expiredTasksRef = useRef<Set<string>>(new Set());
+  const notifiedTasksRef = useRef<Set<string>>(new Set());
 
   useEffect(() => {
+    // No hacer nada si no hay tareas
+    if (!tasks || tasks.length === 0) return;
+
     const checkTaskStatuses = () => {
       const now = new Date();
       
       tasks.forEach((task) => {
+        // Verificar que la tarea tenga todos los campos necesarios
+        if (!task || !task.id || !task.estado || !task.plazo) return;
+
         if (
           task.estado === 'pendiente' && 
-          task.plazo && 
-          !expiredTasksRef.current.has(task.id)
+          !notifiedTasksRef.current.has(task.id.toString())
         ) {
           const deadlineDate = parseISO(task.plazo);
           
           if (isAfter(now, deadlineDate)) {
-            // Solo actualizamos si la tarea aún está pendiente
-            updateTaskStatus({
-              taskId: task.id,
-              newStatus: 'vencida',
-              observaciones: 'Tarea marcada automáticamente como vencida por sistema',
-              usuario: 'sistema'
-            });
-
-            notify(createTaskNotification(
-              task,
-              'error',
-              'Tarea Vencida'
-            ));
-            
-            expiredTasksRef.current.add(task.id);
+            try {
+              // Notificar que la tarea está retrasada
+              notify(createTaskNotification(
+                task,
+                'warning',
+                'Tarea Retrasada'
+              ));
+              
+              notifiedTasksRef.current.add(task.id.toString());
+            } catch (error) {
+              console.error('Error al crear notificación:', error);
+            }
           }
         }
       });
@@ -45,9 +47,9 @@ export function useTaskStatus(tasks: Task[]) {
 
     checkTaskStatuses();
     
-    let timeoutId: NodeJS.Timeout;
+    let timeoutId: number;
     const scheduleNextCheck = () => {
-      timeoutId = setTimeout(() => {
+      timeoutId = window.setTimeout(() => {
         checkTaskStatuses();
         scheduleNextCheck();
       }, 60 * 60 * 1000); // Verificar cada hora
@@ -56,7 +58,7 @@ export function useTaskStatus(tasks: Task[]) {
     scheduleNextCheck();
 
     return () => {
-      clearTimeout(timeoutId);
+      window.clearTimeout(timeoutId);
     };
   }, [tasks, updateTaskStatus, notify]);
 }

@@ -1,30 +1,36 @@
 export type TaskType = 'intimacion' | 'infraccion' | 'clausura' | 'decomiso' | 'habilitacion' | 'planos';
-export type TaskStatus = 'pendiente' | 'completada' | 'vencida';
-
-export interface StatusChange {
-  from: TaskStatus;
-  to: TaskStatus;
-  date: string;
-  observaciones: string;
-  usuario: string;
-}
+export type TaskStatus = 'pendiente' | 'en_progreso' | 'completada';
 
 export interface Task {
-  id: string;
-  fecha: string;
-  tipoActa: TaskType;
-  numeroActa: string;
-  infractor: {
-    nombre: string;
-    dni: string;
-    domicilio: string;
-  };
-  descripcionFalta: string;
-  plazo?: string;
-  observaciones?: string;
-  estado: TaskStatus;
-  creadoPor: string;
-  historialEstados: StatusChange[];
+    id: number;
+    fecha: string;
+    tipo_acta: TaskType;
+    numero_acta: string;
+    plazo?: string;
+    infractor_nombre: string;
+    infractor_dni: string;
+    infractor_domicilio: string;
+    descripcion_falta: string;
+    observaciones?: string;
+    estado: TaskStatus;
+    expediente_id?: number;
+    created_by: number;
+    created_by_name?: string;
+    created_at: string;
+    updated_at: string;
 }
 
-export interface TaskFormData extends Omit<Task, 'id' | 'estado' | 'creadoPor' | 'historialEstados'> {}
+export interface TaskFormData {
+    fecha: string;
+    tipo_acta: TaskType;
+    numero_acta: string;
+    plazo?: string;
+    infractor_nombre: string;
+    infractor_dni: string;
+    infractor_domicilio: string;
+    descripcion_falta: string;
+    observaciones?: string;
+    estado?: TaskStatus;
+    expediente_id?: number;
+    created_by?: number;
+}

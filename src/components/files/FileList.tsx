@@ -2,21 +2,45 @@ import React from 'react';
 import { Edit, Trash2 } from 'lucide-react';
 import { format } from 'date-fns';
 import { es } from 'date-fns/locale';
-import { File } from '../../types/file';
+import { File, FileStatus } from '../../types/file';
 import { cn } from '../../lib/utils';
 
 interface FileListProps {
   files: File[];
   onEdit: (file: File) => void;
-  onDelete: (id: string) => void;
+  onDelete: (id: number) => void;
 }
 
-const statusColors = {
-  en_proceso: 'bg-yellow-100 text-yellow-800',
-  completado: 'bg-green-100 text-green-800',
-};
-
 function FileList({ files, onEdit, onDelete }: FileListProps) {
+  console.log('FileList - files recibidos:', files);
+
+  const getStatusColor = (estado: FileStatus) => {
+    switch (estado) {
+      case 'completado':
+        return 'bg-green-100 text-green-800';
+      case 'pendiente':
+        return 'bg-yellow-100 text-yellow-800';
+      default:
+        return 'bg-gray-100 text-gray-800';
+    }
+  };
+
+  const formatDate = (dateString: string | null | undefined) => {
+    if (!dateString) return '';
+    try {
+      const date = new Date(dateString);
+      return format(date, 'dd/MM/yyyy', { locale: es });
+    } catch (error) {
+      console.error('Error formateando fecha:', dateString, error);
+      return '';
+    }
+  };
+
+  if (!Array.isArray(files)) {
+    console.error('FileList - files no es un array:', files);
+    return <div>Error: No se pudieron cargar los expedientes</div>;
+  }
+
   return (
     <div className="overflow-x-auto">
       <table className="min-w-full divide-y divide-gray-200">
@@ -49,7 +73,7 @@ function FileList({ files, onEdit, onDelete }: FileListProps) {
           {files.map((file) => (
             <tr key={file.id} className="hover:bg-gray-50">
               <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                {format(new Date(file.fecha + 'T12:00:00'), 'dd/MM/yyyy', { locale: es })}
+                {formatDate(file.fecha)}
               </td>
               <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
                 {file.numeroExpediente}
@@ -58,17 +82,17 @@ function FileList({ files, onEdit, onDelete }: FileListProps) {
                 {file.caratula}
               </td>
               <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                {file.fechaSalida && format(new Date(file.fechaSalida + 'T12:00:00'), 'dd/MM/yyyy', { locale: es })}
+                {formatDate(file.fechaSalida)}
               </td>
               <td className="px-6 py-4 text-sm text-gray-900">
                 {file.destino}
               </td>
               <td className="px-6 py-4 whitespace-nowrap">
                 <span className={cn(
-                  "px-2 inline-flex text-xs leading-5 font-semibold rounded-full",
-                  statusColors[file.estado]
+                  'px-2 inline-flex text-xs leading-5 font-semibold rounded-full',
+                  getStatusColor(file.estado)
                 )}>
-                  {file.estado === 'en_proceso' ? 'En Proceso' : 'Completado'}
+                  {file.estado}
                 </span>
               </td>
               <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">

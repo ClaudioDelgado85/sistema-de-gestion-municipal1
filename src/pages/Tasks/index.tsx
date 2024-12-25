@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Plus } from 'lucide-react';
 import TaskList from '../../components/tasks/TaskList';
 import TaskForm from './components/TaskForm';
@@ -10,19 +10,36 @@ import { useTaskStatus } from '../../hooks/useTaskStatus';
 function Tasks() {
   const [showForm, setShowForm] = useState(false);
   const [editingTask, setEditingTask] = useState<Task | null>(null);
-  const { tasks, addTask, updateTask } = useTaskStore();
+  const { tasks, addTask, updateTask, fetchTasks } = useTaskStore();
 
   // Hook para manejar el estado de las tareas y notificaciones
   useTaskStatus(tasks);
 
-  const handleSubmit = (data: TaskFormData) => {
-    if (editingTask) {
-      updateTask(editingTask.id, data);
-    } else {
-      addTask(data);
+  // Cargar tareas al montar el componente y cuando cambie el estado
+  useEffect(() => {
+    fetchTasks().catch(console.error);
+  }, [fetchTasks]);
+
+  const handleSubmit = async (data: TaskFormData) => {
+    try {
+      console.log('Datos recibidos:', data);
+      if (editingTask) {
+        await updateTask(editingTask.id, data);
+      } else {
+        await addTask({
+          ...data,
+          created_by: 1 // Por ahora hardcodeamos el usuario
+        });
+      }
+      // Recargar las tareas después de crear/actualizar
+      await fetchTasks();
+      // Cerrar el formulario y limpiar el estado de edición
+      setShowForm(false);
+      setEditingTask(null);
+    } catch (error) {
+      console.error('Error al guardar la tarea:', error);
+      // Aquí podrías mostrar un mensaje de error al usuario
     }
-    setShowForm(false);
-    setEditingTask(null);
   };
 
   const handleEdit = (task: Task) => {
