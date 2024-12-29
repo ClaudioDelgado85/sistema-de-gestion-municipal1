@@ -12,12 +12,30 @@ const api = axios.create({
     },
 });
 
+// Add a request interceptor
+api.interceptors.request.use(
+    (config) => {
+        const token = localStorage.getItem('token');
+        if (token) {
+            config.headers.Authorization = `Bearer ${token}`;
+        }
+        return config;
+    },
+    (error) => {
+        return Promise.reject(error);
+    }
+);
+
 // Auth Services
 export const authService = {
     login: async (credentials: LoginCredentials) => {
-        const response = await api.post<User>('/users/login', credentials);
-        return response.data;
+        const response = await api.post<{token: string, user: User}>('/users/login', credentials);
+        localStorage.setItem('token', response.data.token);
+        return response.data.user;
     },
+    logout: () => {
+        localStorage.removeItem('token');
+    }
 };
 
 // User Services
