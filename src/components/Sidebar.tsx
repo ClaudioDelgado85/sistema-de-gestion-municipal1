@@ -1,6 +1,6 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Link, useLocation } from 'react-router-dom';
-import { Home, FileText, ClipboardList, LogOut } from 'lucide-react';
+import { Home, FileText, ClipboardList, LogOut, ChevronLeft, ChevronRight } from 'lucide-react';
 import { cn } from '../lib/utils';
 import { useAuthStore } from '../store/auth';
 
@@ -13,9 +13,26 @@ const navigation = [
 function Sidebar() {
   const location = useLocation();
   const logout = useAuthStore((state) => state.logout);
+  const [isCollapsed, setIsCollapsed] = useState(false);
 
   return (
-    <div className="w-64 bg-white border-r border-gray-200 min-h-screen">
+    <div 
+      className={cn(
+        "bg-white border-r border-gray-200 min-h-screen transition-all duration-300 relative",
+        isCollapsed ? "w-16" : "w-64"
+      )}
+    >
+      <button
+        onClick={() => setIsCollapsed(!isCollapsed)}
+        className="absolute -right-3 top-6 bg-white border border-gray-200 rounded-full p-1 hover:bg-gray-50 z-10"
+      >
+        {isCollapsed ? (
+          <ChevronRight className="h-4 w-4 text-gray-600" />
+        ) : (
+          <ChevronLeft className="h-4 w-4 text-gray-600" />
+        )}
+      </button>
+
       <nav className="flex flex-col h-full">
         <div className="space-y-1 py-4">
           {navigation.map((item) => {
@@ -25,14 +42,16 @@ function Sidebar() {
                 key={item.name}
                 to={item.href}
                 className={cn(
-                  'flex items-center px-4 py-2 text-sm font-medium rounded-md',
+                  'flex items-center py-2 text-sm font-medium rounded-md',
+                  isCollapsed ? 'justify-center px-2' : 'px-4',
                   location.pathname === item.href
                     ? 'bg-gray-100 text-gray-900'
                     : 'text-gray-600 hover:bg-gray-50 hover:text-gray-900'
                 )}
+                title={isCollapsed ? item.name : undefined}
               >
-                <Icon className="mr-3 h-5 w-5" />
-                {item.name}
+                <Icon className={cn("h-5 w-5", !isCollapsed && "mr-3")} />
+                {!isCollapsed && item.name}
               </Link>
             );
           })}
@@ -40,10 +59,14 @@ function Sidebar() {
         <div className="mt-auto pb-4">
           <button
             onClick={logout}
-            className="flex items-center px-4 py-2 text-sm font-medium text-gray-600 hover:bg-gray-50 hover:text-gray-900 w-full"
+            className={cn(
+              'flex items-center py-2 text-sm font-medium text-gray-600 hover:bg-gray-50 hover:text-gray-900 w-full',
+              isCollapsed ? 'justify-center px-2' : 'px-4'
+            )}
+            title={isCollapsed ? "Cerrar sesión" : undefined}
           >
-            <LogOut className="mr-3 h-5 w-5" />
-            Cerrar sesión
+            <LogOut className={cn("h-5 w-5", !isCollapsed && "mr-3")} />
+            {!isCollapsed && "Cerrar sesión"}
           </button>
         </div>
       </nav>

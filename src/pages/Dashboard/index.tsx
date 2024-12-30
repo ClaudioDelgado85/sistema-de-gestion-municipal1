@@ -2,6 +2,7 @@ import React from 'react';
 import TaskSummary from './components/TaskSummary';
 import TasksOverview from './components/TasksOverview';
 import UpcomingTasks from './components/UpcomingTasks';
+import FilesAnalysis from './components/FilesAnalysis';
 import RecentActivity from './components/RecentActivity';
 import DailyReportButton from './components/DailyReportButton';
 import { useTaskStore } from '../../store/tasks';
@@ -29,7 +30,16 @@ function Dashboard() {
       </div>
 
       {/* Resumen de estados de tareas */}
-      <TaskSummary />
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        <div>
+          <h3 className="text-lg font-semibold mb-4">Resumen de Tareas</h3>
+          <TaskSummary />
+        </div>
+        <div>
+          <h3 className="text-lg font-semibold mb-4">Resumen de Expedientes</h3>
+          <FilesAnalysis />
+        </div>
+      </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         {/* Gráfico de distribución de tareas */}
