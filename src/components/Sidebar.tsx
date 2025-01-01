@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Link, useLocation } from 'react-router-dom';
-import { Home, FileText, ClipboardList, LogOut, ChevronLeft, ChevronRight } from 'lucide-react';
+import { Home, FileText, ClipboardList, LogOut, ChevronLeft, ChevronRight, Activity } from 'lucide-react';
 import { cn } from '../lib/utils';
 import { useAuthStore } from '../store/auth';
 
@@ -8,6 +8,7 @@ const navigation = [
   { name: 'Dashboard', href: '/', icon: Home },
   { name: 'Tareas', href: '/tasks', icon: ClipboardList },
   { name: 'Expedientes', href: '/files', icon: FileText },
+  { name: 'Otras Actividades', href: '/other-activities', icon: Activity },
 ];
 
 function Sidebar() {

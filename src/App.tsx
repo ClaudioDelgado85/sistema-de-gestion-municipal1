@@ -6,6 +6,7 @@ import Dashboard from './pages/Dashboard';
 import Login from './pages/Login';
 import Tasks from './pages/Tasks';
 import Files from './pages/Files';
+import OtherActivities from './pages/OtherActivities';
 import ProtectedRoute from './components/ProtectedRoute';
 
 const queryClient = new QueryClient();
@@ -21,6 +22,7 @@ function App() {
               <Route path="/" element={<Dashboard />} />
               <Route path="/tasks" element={<Tasks />} />
               <Route path="/files" element={<Files />} />
+              <Route path="/other-activities" element={<OtherActivities />} />
             </Route>
           </Route>
         </Routes>
