@@ -4,7 +4,7 @@ import TasksOverview from './components/TasksOverview';
 import UpcomingTasks from './components/UpcomingTasks';
 import FilesAnalysis from './components/FilesAnalysis';
 import RecentActivity from './components/RecentActivity';
-import DailyReportButton from './components/DailyReportButton';
+import DailyActivitiesReportButton from './components/DailyActivitiesReportButton';
 import { useTaskStore } from '../../store/tasks';
 import { useFileStore } from '../../store/files';
 
@@ -26,7 +26,7 @@ function Dashboard() {
             Resumen de actividades y estadísticas
           </p>
         </div>
-        <DailyReportButton />
+        <DailyActivitiesReportButton />
       </div>
 
       {/* Resumen de estados de tareas */}
@@ -50,11 +50,9 @@ function Dashboard() {
       </div>
 
       {/* Actividad reciente */}
-      <div className="bg-white rounded-lg shadow">
-        <div className="p-6">
-          <h3 className="text-lg font-semibold mb-4">Actividad Reciente</h3>
-          <RecentActivity />
-        </div>
+      <div>
+        <h3 className="text-lg font-semibold mb-4">Actividad Reciente</h3>
+        <RecentActivity />
       </div>
     </div>
   );

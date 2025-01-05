@@ -20,6 +20,8 @@ interface TaskState {
   tasks: Task[];
   filters: TaskFilters;
   sortConfig: SortConfig;
+  isLoading: boolean;
+  error: string | null;
   setFilters: (filters: Partial<TaskFilters>) => void;
   setSortConfig: (config: SortConfig) => void;
   fetchTasks: () => Promise<void>;
@@ -46,6 +48,8 @@ export const useTaskStore = create<TaskState>((set) => ({
   tasks: [],
   filters: initialFilters,
   sortConfig: { key: null, direction: 'asc' },
+  isLoading: false,
+  error: null,
 
   setFilters: (newFilters) =>
     set((state) => ({
@@ -58,50 +62,87 @@ export const useTaskStore = create<TaskState>((set) => ({
     })),
 
   fetchTasks: async () => {
+    set({ isLoading: true, error: null });
     try {
+      console.log('Iniciando fetchTasks...');
       const tasks = await taskService.getAll();
-      set({ tasks: tasks as Task[] });
+      console.log('Tareas cargadas desde la API:', tasks);
+      // Asegurarse de que todas las tareas tengan los campos necesarios
+      const processedTasks = tasks.map(task => ({
+        ...task,
+        fecha: task.fecha || task.created_at,
+        estado: task.estado || 'pendiente'
+      }));
+      console.log('Tareas procesadas:', processedTasks);
+      set({ tasks: processedTasks, isLoading: false, error: null });
     } catch (error) {
-      console.error('Error al obtener tareas:', error);
-      throw error;
+      console.error('Error al cargar tareas:', error);
+      set({ error: (error as Error).message, isLoading: false });
     }
   },
 
   addTask: async (taskData) => {
+    set({ isLoading: true, error: null });
     try {
       const newTask = await taskService.create(taskData);
       set((state) => ({
-        tasks: [newTask as Task, ...state.tasks],
+        tasks: [...state.tasks, newTask],
+        isLoading: false,
+        error: null
       }));
     } catch (error) {
       console.error('Error al crear tarea:', error);
-      throw error;
+      set({ error: (error as Error).message, isLoading: false });
     }
   },
 
   updateTask: async (id, taskData) => {
+    set({ isLoading: true, error: null });
     try {
-      const updatedTask = await taskService.update(id, taskData);
+      // Asegurarse de que taskData tenga todos los campos requeridos
+      const currentTask = useTaskStore.getState().tasks.find(t => t.id === id);
+      if (!currentTask) throw new Error('Tarea no encontrada');
+
+      const updatedTaskData: TaskFormData = {
+        fecha: taskData.fecha || currentTask.fecha,
+        tipo_acta: taskData.tipo_acta || currentTask.tipo_acta,
+        numero_acta: taskData.numero_acta || currentTask.numero_acta,
+        infractor_nombre: taskData.infractor_nombre || currentTask.infractor_nombre,
+        infractor_dni: taskData.infractor_dni || currentTask.infractor_dni,
+        infractor_domicilio: taskData.infractor_domicilio || currentTask.infractor_domicilio,
+        descripcion_falta: taskData.descripcion_falta || currentTask.descripcion_falta,
+        estado: taskData.estado || currentTask.estado,
+        plazo: taskData.plazo || currentTask.plazo,
+        observaciones: taskData.observaciones || currentTask.observaciones,
+        expediente_id: taskData.expediente_id || currentTask.expediente_id
+      };
+
+      const updatedTask = await taskService.update(id, updatedTaskData);
       set((state) => ({
         tasks: state.tasks.map((task) =>
-          task.id === id ? (updatedTask as Task) : task
+          task.id === id ? { ...task, ...updatedTask } : task
         ),
+        isLoading: false,
+        error: null
       }));
     } catch (error) {
       console.error('Error al actualizar tarea:', error);
-      throw error;
+      set({ error: (error as Error).message, isLoading: false });
     }
   },
 
   deleteTask: async (id) => {
+    set({ isLoading: true, error: null });
     try {
       await taskService.delete(id);
       set((state) => ({
         tasks: state.tasks.filter((task) => task.id !== id),
+        isLoading: false,
+        error: null
       }));
     } catch (error) {
       console.error('Error al eliminar tarea:', error);
-      throw error;
+      set({ error: (error as Error).message, isLoading: false });
     }
   },
 
@@ -130,11 +171,11 @@ export const useTaskStore = create<TaskState>((set) => ({
 
       // Actualizar la tarea
       const updatedTask = await taskService.update(taskId, updateData);
-      
+
       // Actualizar el estado local
       set((state) => ({
         tasks: state.tasks.map((t) =>
-          t.id === taskId ? (updatedTask as Task) : t
+          t.id === taskId ? { ...t, ...updatedTask } : t
         ),
       }));
     } catch (error) {

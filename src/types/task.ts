@@ -1,5 +1,5 @@
 export type TaskType = 'intimacion' | 'infraccion' | 'clausura' | 'decomiso' | 'habilitacion' | 'planos';
-export type TaskStatus = 'pendiente' | 'en_progreso' | 'completada';
+export type TaskStatus = 'pendiente' | 'en_progreso' | 'completada' | 'completado';
 
 export interface Task {
     id: number;

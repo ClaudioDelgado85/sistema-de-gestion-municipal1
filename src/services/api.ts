@@ -5,7 +5,7 @@ import { File } from '../types/api';
 
 const API_URL = 'http://localhost:8080/api';
 
-const api = axios.create({
+export const api = axios.create({
     baseURL: API_URL,
     headers: {
         'Content-Type': 'application/json',
@@ -29,9 +29,14 @@ api.interceptors.request.use(
 // Auth Services
 export const authService = {
     login: async (credentials: LoginCredentials) => {
-        const response = await api.post<{token: string, user: User}>('/users/login', credentials);
-        localStorage.setItem('token', response.data.token);
-        return response.data.user;
+        try {
+            const response = await api.post<{token: string, user: User}>('/users/login', credentials);
+            localStorage.setItem('token', response.data.token);
+            return response.data.user;
+        } catch (error) {
+            console.error('Error al iniciar sesión:', error);
+            throw error;
+        }
     },
     logout: () => {
         localStorage.removeItem('token');
@@ -41,44 +46,51 @@ export const authService = {
 // User Services
 export const userService = {
     getAll: async () => {
-        const response = await api.get<User[]>('/users');
-        return response.data;
+        try {
+            const response = await api.get<User[]>('/users');
+            return response.data;
+        } catch (error) {
+            console.error('Error al obtener usuarios:', error);
+            throw error;
+        }
     },
     create: async (userData: Omit<User, 'id'> & { password: string }) => {
-        const response = await api.post<User>('/users', userData);
-        return response.data;
+        try {
+            const response = await api.post<User>('/users', userData);
+            return response.data;
+        } catch (error) {
+            console.error('Error al crear usuario:', error);
+            throw error;
+        }
     },
 };
 
 // Task Services
 export const taskService = {
     getAll: async () => {
-        const response = await api.get<Task[]>('/tasks');
-        return response.data;
+        try {
+            const response = await api.get<Task[]>('/tasks');
+            return response.data;
+        } catch (error) {
+            console.error('Error al obtener tareas:', error);
+            throw error;
+        }
     },
     getById: async (id: number) => {
-        const response = await api.get<Task>(`/tasks/${id}`);
-        return response.data;
+        try {
+            const response = await api.get<Task>(`/tasks/${id}`);
+            return response.data;
+        } catch (error) {
+            console.error('Error al obtener tarea:', error);
+            throw error;
+        }
     },
     create: async (taskData: TaskFormData) => {
-        console.log('Datos originales:', JSON.stringify(taskData, null, 2));
+        console.log('Enviando datos al servidor:', taskData);
         try {
-            // Formatear las fechas al formato ISO
-            const dataToSend = {
-                ...taskData,
-                fecha: new Date(taskData.fecha).toISOString(),
-                plazo: taskData.plazo ? new Date(taskData.plazo).toISOString() : null,
-                created_by: taskData.created_by || 1,
-                expediente_id: taskData.expediente_id || null
-            };
-            
-            console.log('Datos formateados a enviar:', JSON.stringify(dataToSend, null, 2));
-            const response = await api.post<Task>('/tasks', dataToSend);
-            console.log('Respuesta del servidor:', response.data);
+            const response = await api.post<Task>('/tasks', taskData);
             return response.data;
-        } catch (error: any) {
-            console.error('Error detallado:', error.response?.data);
-            console.error('Estado de la respuesta:', error.response?.status);
+        } catch (error) {
             console.error('Error al crear tarea:', error);
             throw error;
         }
@@ -86,8 +98,7 @@ export const taskService = {
     update: async (id: number, taskData: TaskFormData) => {
         console.log('Actualizando tarea:', id, taskData);
         try {
-            const response = await api.put<Task>(`/tasks/${id}`, taskData);
-            console.log('Respuesta del servidor:', response.data);
+            const response = await api.patch<Task>(`/tasks/${id}`, taskData);
             return response.data;
         } catch (error) {
             console.error('Error al actualizar tarea:', error);
@@ -107,8 +118,13 @@ export const taskService = {
 // File Services
 export const fileService = {
     getAll: async () => {
-        const response = await api.get<File[]>('/files');
-        return response.data;
+        try {
+            const response = await api.get<File[]>('/files');
+            return response.data;
+        } catch (error) {
+            console.error('Error al obtener expedientes:', error);
+            throw error;
+        }
     },
     create: async (fileData: any) => {
         console.log('Enviando datos al servidor:', fileData);
