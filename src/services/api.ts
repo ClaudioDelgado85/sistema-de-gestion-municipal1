@@ -98,7 +98,7 @@ export const taskService = {
     update: async (id: number, taskData: TaskFormData) => {
         console.log('Actualizando tarea:', id, taskData);
         try {
-            const response = await api.patch<Task>(`/tasks/${id}`, taskData);
+            const response = await api.put<Task>(`/tasks/${id}`, taskData);
             return response.data;
         } catch (error) {
             console.error('Error al actualizar tarea:', error);

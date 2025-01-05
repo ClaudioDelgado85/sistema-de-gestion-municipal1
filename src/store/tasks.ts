@@ -147,6 +147,7 @@ export const useTaskStore = create<TaskState>((set) => ({
   },
 
   updateTaskStatus: async ({ taskId, newStatus, observaciones }) => {
+    set({ isLoading: true, error: null });
     try {
       // Encontrar la tarea actual en el estado
       const currentTask = useTaskStore.getState().tasks.find(t => t.id === taskId);
@@ -177,9 +178,15 @@ export const useTaskStore = create<TaskState>((set) => ({
         tasks: state.tasks.map((t) =>
           t.id === taskId ? { ...t, ...updatedTask } : t
         ),
+        isLoading: false,
+        error: null
       }));
     } catch (error) {
       console.error('Error al actualizar estado:', error);
+      set({ 
+        error: (error as Error).message, 
+        isLoading: false 
+      });
       throw error;
     }
   },
