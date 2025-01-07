@@ -1,4 +1,4 @@
-import { FileDown, Loader2 } from 'lucide-react';
+import { FileDown, Loader2, Calendar } from 'lucide-react';
 import { useTaskStore } from '../../../store/tasks';
 import { useOtherActivitiesStore } from '../../../store/otherActivities';
 import { useFileStore } from '../../../store/files';
@@ -8,6 +8,10 @@ import { OtherActivity } from '../../../types/OtherActivity';
 import { File } from '../../../types/api';
 import jsPDF from 'jspdf';
 import 'jspdf-autotable';
+import { format } from 'date-fns';
+import { es } from 'date-fns/locale';
+import DatePicker from 'react-datepicker';
+import "react-datepicker/dist/react-datepicker.css";
 
 interface ReportData {
   tasks: Task[];
@@ -16,6 +20,7 @@ interface ReportData {
 }
 
 function DailyActivitiesReportButton() {
+  const [selectedDate, setSelectedDate] = useState<Date | null>(new Date());
   const [isLoadingFiles, setIsLoadingFiles] = useState(false);
   const tasks = useTaskStore((state) => state.tasks);
   const fetchTasks = useTaskStore((state) => state.fetchTasks);
@@ -59,48 +64,57 @@ function DailyActivitiesReportButton() {
     loadData();
   }, [fetchTasks, fetchActivities, fetchFiles]);
 
-  const getTodayItems = () => {
-    const today = new Date();
-    today.setHours(0, 0, 0, 0);
+  const getItemsForDate = () => {
+    if (!selectedDate) return {
+      tasks: [],
+      files: [],
+      otherActivities: []
+    };
 
-    const todayTasks = tasks.filter(task => {
+    const targetDate = new Date(selectedDate);
+    targetDate.setHours(0, 0, 0, 0);
+
+    const filteredTasks = tasks.filter(task => {
       const taskDate = new Date(task.fecha || task.created_at);
       taskDate.setHours(0, 0, 0, 0);
-      return taskDate.getTime() === today.getTime();
+      return taskDate.getTime() === targetDate.getTime();
     });
 
-    const todayActivities = activities.filter(activity => {
+    const filteredActivities = activities.filter(activity => {
       const activityDate = new Date(activity.created_at);
       activityDate.setHours(0, 0, 0, 0);
-      return activityDate.getTime() === today.getTime();
+      return activityDate.getTime() === targetDate.getTime();
     });
 
-    const todayCompletedFiles = files.filter(file => {
+    const filteredCompletedFiles = files.filter(file => {
       const fileDate = new Date(file.created_at);
       fileDate.setHours(0, 0, 0, 0);
-      return fileDate.getTime() === today.getTime() && file.estado === 'completado';
+      return fileDate.getTime() === targetDate.getTime() && file.estado === 'completado';
     });
 
     console.log('=== Información para el informe ===');
-    console.log('Tareas del día:', todayTasks);
-    console.log('Otras actividades del día:', todayActivities);
-    console.log('Expedientes completados del día:', todayCompletedFiles);
+    console.log('Fecha seleccionada:', format(targetDate, 'dd/MM/yyyy'));
+    console.log('Tareas del día:', filteredTasks);
+    console.log('Otras actividades del día:', filteredActivities);
+    console.log('Expedientes completados del día:', filteredCompletedFiles);
     console.log('================================');
 
     return {
-      tasks: todayTasks,
-      files: todayCompletedFiles,
-      otherActivities: todayActivities
+      tasks: filteredTasks,
+      files: filteredCompletedFiles,
+      otherActivities: filteredActivities
     };
   };
 
   const generateDailyReport = (data: ReportData) => {
+    if (!selectedDate) return;
+    
     const doc = new jsPDF();
-    const today = new Date().toLocaleDateString();
+    const formattedDate = format(selectedDate, 'dd/MM/yyyy');
 
     // Título
     doc.setFontSize(16);
-    doc.text(`Informe de Actividades del Día - ${today}`, 20, 20);
+    doc.text(`Informe de Actividades - ${formattedDate}`, 20, 20);
 
     // Tareas
     doc.setFontSize(14);
@@ -157,26 +171,40 @@ function DailyActivitiesReportButton() {
   };
 
   const handleGenerateReport = () => {
-    const reportData = getTodayItems();
+    if (!selectedDate) return;
+    
+    const reportData = getItemsForDate();
     const doc = generateDailyReport(reportData);
-    doc.save('informe-actividades-diario.pdf');
+    if (!doc) return; // Si generateDailyReport retorna undefined
+    
+    const formattedDate = format(selectedDate, 'dd-MM-yyyy');
+    doc.save(`informe-actividades-${formattedDate}.pdf`);
   };
 
   const isLoading = isLoadingTasks || isLoadingActivities || isLoadingFiles;
 
   return (
-    <button
-      onClick={handleGenerateReport}
-      disabled={isLoading}
-      className="inline-flex items-center px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-green-600 hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500 disabled:opacity-50 disabled:cursor-not-allowed"
-    >
-      {isLoading ? (
-        <Loader2 className="h-5 w-5 mr-2 animate-spin" />
-      ) : (
-        <FileDown className="h-5 w-5 mr-2" />
-      )}
-      {isLoading ? 'Cargando...' : 'Informe de Actividades del Día'}
-    </button>
+    <div className="flex items-center gap-4">
+      <DatePicker
+        selected={selectedDate}
+        onChange={(date: Date | null) => setSelectedDate(date)}
+        dateFormat="dd/MM/yyyy"
+        className="px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-green-500"
+        locale={es}
+      />
+      <button
+        onClick={handleGenerateReport}
+        disabled={isLoading}
+        className="inline-flex items-center px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-green-600 hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500 disabled:opacity-50 disabled:cursor-not-allowed"
+      >
+        {isLoading ? (
+          <Loader2 className="h-5 w-5 mr-2 animate-spin" />
+        ) : (
+          <FileDown className="h-5 w-5 mr-2" />
+        )}
+        {isLoading ? 'Cargando...' : 'Generar Informe'}
+      </button>
+    </div>
   );
 }
 
