@@ -19,18 +19,21 @@ function Sidebar() {
   return (
     <div 
       className={cn(
-        "bg-white border-r border-gray-200 min-h-screen transition-all duration-300 relative",
+        "border-r min-h-screen transition-all duration-200 relative bg-white dark:bg-gray-800 border-gray-200 dark:border-gray-700",
         isCollapsed ? "w-16" : "w-64"
       )}
     >
       <button
         onClick={() => setIsCollapsed(!isCollapsed)}
-        className="absolute -right-3 top-6 bg-white border border-gray-200 rounded-full p-1 hover:bg-gray-50 z-10"
+        className={cn(
+          "absolute -right-3 top-6 border rounded-full p-1 z-10 bg-white dark:bg-gray-800 border-gray-200 dark:border-gray-700",
+          "hover:bg-gray-50 dark:hover:bg-gray-700"
+        )}
       >
         {isCollapsed ? (
-          <ChevronRight className="h-4 w-4 text-gray-600" />
+          <ChevronRight className="h-4 w-4 text-gray-600 dark:text-gray-300" />
         ) : (
-          <ChevronLeft className="h-4 w-4 text-gray-600" />
+          <ChevronLeft className="h-4 w-4 text-gray-600 dark:text-gray-300" />
         )}
       </button>
 
@@ -46,13 +49,19 @@ function Sidebar() {
                   'flex items-center py-2 text-sm font-medium rounded-md',
                   isCollapsed ? 'justify-center px-2' : 'px-4',
                   location.pathname === item.href
-                    ? 'bg-gray-100 text-gray-900'
-                    : 'text-gray-600 hover:bg-gray-50 hover:text-gray-900'
+                    ? 'bg-gray-100 dark:bg-gray-700 text-gray-900 dark:text-white'
+                    : 'text-gray-600 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700 hover:text-gray-900 dark:hover:text-white'
                 )}
-                title={isCollapsed ? item.name : undefined}
               >
-                <Icon className={cn("h-5 w-5", !isCollapsed && "mr-3")} />
-                {!isCollapsed && item.name}
+                <Icon className={cn(
+                  'flex-shrink-0 h-5 w-5',
+                  location.pathname === item.href
+                    ? 'text-gray-900 dark:text-white'
+                    : 'text-gray-600 dark:text-gray-300'
+                )} />
+                {!isCollapsed && (
+                  <span className="ml-3">{item.name}</span>
+                )}
               </Link>
             );
           })}
@@ -61,13 +70,15 @@ function Sidebar() {
           <button
             onClick={logout}
             className={cn(
-              'flex items-center py-2 text-sm font-medium text-gray-600 hover:bg-gray-50 hover:text-gray-900 w-full',
-              isCollapsed ? 'justify-center px-2' : 'px-4'
+              'flex items-center w-full py-2 text-sm font-medium rounded-md',
+              isCollapsed ? 'justify-center px-2' : 'px-4',
+              'text-gray-600 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700 hover:text-gray-900 dark:hover:text-white'
             )}
-            title={isCollapsed ? "Cerrar sesión" : undefined}
           >
-            <LogOut className={cn("h-5 w-5", !isCollapsed && "mr-3")} />
-            {!isCollapsed && "Cerrar sesión"}
+            <LogOut className="flex-shrink-0 h-5 w-5 text-gray-600 dark:text-gray-300" />
+            {!isCollapsed && (
+              <span className="ml-3">Cerrar sesión</span>
+            )}
           </button>
         </div>
       </nav>

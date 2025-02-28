@@ -4,7 +4,7 @@ import axios from 'axios';
 
 // Configuración base de axios
 const api = axios.create({
-  baseURL: 'http://localhost:8080', // URL del backend
+  baseURL: 'http://localhost:3000', // URL del backend
 });
 
 interface OtherActivityState {

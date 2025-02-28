@@ -3,7 +3,7 @@ import { User, LoginCredentials } from '../types/api';
 import { Task, TaskFormData } from '../types/task';
 import { File } from '../types/api';
 
-const API_URL = 'http://localhost:8080/api';
+const API_URL = 'http://localhost:3000/api';
 
 export const api = axios.create({
     baseURL: API_URL,
@@ -53,16 +53,7 @@ export const userService = {
             console.error('Error al obtener usuarios:', error);
             throw error;
         }
-    },
-    create: async (userData: Omit<User, 'id'> & { password: string }) => {
-        try {
-            const response = await api.post<User>('/users', userData);
-            return response.data;
-        } catch (error) {
-            console.error('Error al crear usuario:', error);
-            throw error;
-        }
-    },
+    }
 };
 
 // Task Services

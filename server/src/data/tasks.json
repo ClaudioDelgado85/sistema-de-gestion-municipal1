@@ -1,0 +1,72 @@
+{
+  "tasks": [
+    {
+      "id": "a6ca4906-f3d0-4214-9ea6-fdf3eb439290",
+      "fecha": "2025-02-27",
+      "tipo_acta": "intimacion",
+      "numero_acta": "0001-00010",
+      "plazo": "2025-02-28",
+      "infractor_nombre": "bolaterapia",
+      "infractor_dni": "123987",
+      "infractor_domicilio": "por todos lados",
+      "descripcion_falta": "vamos a ver si funciona",
+      "observaciones": null,
+      "estado": "pendiente",
+      "expediente_id": null,
+      "created_by": 1,
+      "created_at": "2025-02-27T19:46:58.656Z",
+      "updated_at": "2025-02-27T19:46:58.656Z"
+    },
+    {
+      "id": "6aec2bdb-2a50-4bad-b15e-039bfbf12d12",
+      "fecha": "2025-02-27",
+      "tipo_acta": "infraccion",
+      "numero_acta": "0001-0000333",
+      "plazo": null,
+      "infractor_nombre": "otra prueba json",
+      "infractor_dni": "45",
+      "infractor_domicilio": "mi pc",
+      "descripcion_falta": "seguimos probando",
+      "observaciones": null,
+      "estado": "pendiente",
+      "expediente_id": null,
+      "created_by": 1,
+      "created_at": "2025-02-27T20:27:20.657Z",
+      "updated_at": "2025-02-27T20:27:20.657Z"
+    },
+    {
+      "id": "39744f1a-d877-4b37-9ba2-8836a05b1c89",
+      "fecha": "2025-02-27",
+      "tipo_acta": "intimacion",
+      "numero_acta": "0001-0000323",
+      "plazo": "2025-02-28",
+      "infractor_nombre": "JsonX",
+      "infractor_dni": "2323",
+      "infractor_domicilio": "en mi pc",
+      "descripcion_falta": "por ser muy malo",
+      "observaciones": null,
+      "estado": "pendiente",
+      "expediente_id": null,
+      "created_by": 1,
+      "created_at": "2025-02-27T21:21:16.117Z",
+      "updated_at": "2025-02-27T21:21:16.117Z"
+    },
+    {
+      "id": "4e517f13-b813-48f4-8126-85e76d66d097",
+      "fecha": "2025-02-28",
+      "tipo_acta": "intimacion",
+      "numero_acta": "0001-000101",
+      "plazo": "2025-03-02",
+      "infractor_nombre": "Donatelo",
+      "infractor_dni": "3434",
+      "infractor_domicilio": "en las alcantarillas",
+      "descripcion_falta": "por ser muy lento",
+      "observaciones": null,
+      "estado": "pendiente",
+      "expediente_id": null,
+      "created_by": 1,
+      "created_at": "2025-02-28T11:43:54.748Z",
+      "updated_at": "2025-02-28T11:43:54.748Z"
+    }
+  ]
+}

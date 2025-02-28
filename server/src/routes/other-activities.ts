@@ -1,75 +1,108 @@
 import { Router } from 'express';
 import { Request, Response } from 'express';
-import pool from '../db';
+import fs from 'fs';
+import path from 'path';
 
 const router = Router();
+const jsonFilePath = path.join(__dirname, '../data/other-activities.json');
+
+// Helper function to read JSON file
+const readJsonFile = () => {
+  return JSON.parse(fs.readFileSync(jsonFilePath, 'utf8'));
+};
+
+// Helper function to write JSON file
+const writeJsonFile = (data: any) => {
+  fs.writeFileSync(jsonFilePath, JSON.stringify(data, null, 2));
+};
 
 // GET /api/other-activities
-router.get('/', async (req: Request, res: Response) => {
+router.get('/', (_req: Request, res: Response) => {
     try {
-        const result = await pool.query(
-            'SELECT * FROM other_activities ORDER BY fecha DESC'
-        );
-        res.json(result.rows);
+        const jsonData = readJsonFile();
+        return res.json(jsonData.activities);
     } catch (error) {
         console.error('Error al obtener actividades:', error);
-        res.status(500).json({ error: 'Error interno del servidor' });
+        return res.status(500).json({ error: 'Error interno del servidor' });
     }
 });
 
 // POST /api/other-activities
-router.post('/', async (req: Request, res: Response) => {
+router.post('/', (req: Request, res: Response) => {
     try {
         const { fecha, descripcion, direccion, observaciones } = req.body;
-        const result = await pool.query(
-            'INSERT INTO other_activities (fecha, descripcion, direccion, observaciones) VALUES ($1, $2, $3, $4) RETURNING *',
-            [fecha, descripcion, direccion, observaciones]
-        );
-        res.status(201).json(result.rows[0]);
+        const jsonData = readJsonFile();
+        
+        const newActivity = {
+            id: jsonData.activities.length > 0 ? Math.max(...jsonData.activities.map((a: any) => a.id)) + 1 : 1,
+            fecha,
+            descripcion,
+            direccion,
+            observaciones,
+            estado: 'pendiente',
+            created_by: 1, // ID por defecto del usuario
+            created_at: new Date().toISOString(),
+            updated_at: new Date().toISOString()
+        };
+        
+        jsonData.activities.push(newActivity);
+        writeJsonFile(jsonData);
+
+        return res.status(201).json(newActivity);
     } catch (error) {
         console.error('Error al crear actividad:', error);
-        res.status(500).json({ error: 'Error interno del servidor' });
+        return res.status(500).json({ error: 'Error interno del servidor' });
     }
 });
 
 // PUT /api/other-activities/:id
-router.put('/:id', async (req: Request, res: Response) => {
+router.put('/:id', (req: Request, res: Response) => {
     try {
         const { id } = req.params;
         const { fecha, descripcion, direccion, observaciones } = req.body;
-        const result = await pool.query(
-            'UPDATE other_activities SET fecha = $1, descripcion = $2, direccion = $3, observaciones = $4, updated_at = CURRENT_TIMESTAMP WHERE id = $5 RETURNING *',
-            [fecha, descripcion, direccion, observaciones, id]
-        );
+        const jsonData = readJsonFile();
         
-        if (result.rows.length === 0) {
+        const activityIndex = jsonData.activities.findIndex((a: any) => a.id === parseInt(id));
+        if (activityIndex === -1) {
             return res.status(404).json({ error: 'Actividad no encontrada' });
         }
+
+        jsonData.activities[activityIndex] = {
+            ...jsonData.activities[activityIndex],
+            fecha,
+            descripcion,
+            direccion,
+            observaciones,
+            updated_at: new Date().toISOString()
+        };
         
-        res.json(result.rows[0]);
+        writeJsonFile(jsonData);
+        return res.json(jsonData.activities[activityIndex]);
     } catch (error) {
         console.error('Error al actualizar actividad:', error);
-        res.status(500).json({ error: 'Error interno del servidor' });
+        return res.status(500).json({ error: 'Error interno del servidor' });
     }
 });
 
 // DELETE /api/other-activities/:id
-router.delete('/:id', async (req: Request, res: Response) => {
+router.delete('/:id', (req: Request, res: Response) => {
     try {
         const { id } = req.params;
-        const result = await pool.query(
-            'DELETE FROM other_activities WHERE id = $1 RETURNING *',
-            [id]
-        );
+        const jsonData = readJsonFile();
         
-        if (result.rows.length === 0) {
+        const activityIndex = jsonData.activities.findIndex((a: any) => a.id === parseInt(id));
+        if (activityIndex === -1) {
             return res.status(404).json({ error: 'Actividad no encontrada' });
         }
+
+        // Eliminar del archivo JSON
+        jsonData.activities = jsonData.activities.filter((a: any) => a.id !== parseInt(id));
+        writeJsonFile(jsonData);
         
-        res.json({ message: 'Actividad eliminada correctamente' });
+        return res.json({ message: 'Actividad eliminada correctamente' });
     } catch (error) {
         console.error('Error al eliminar actividad:', error);
-        res.status(500).json({ error: 'Error interno del servidor' });
+        return res.status(500).json({ error: 'Error interno del servidor' });
     }
 });
 

@@ -6,7 +6,7 @@ import fileRoutes from './routes/files';
 import otherActivitiesRoutes from './routes/other-activities';
 
 const app = express();
-const port = process.env.PORT || 8080;
+const port = process.env.PORT || 3000;
 
 app.use(cors());
 app.use(express.json());
