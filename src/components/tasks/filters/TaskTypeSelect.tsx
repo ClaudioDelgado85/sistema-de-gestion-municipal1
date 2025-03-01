@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useCallback, memo } from 'react';
 import { useTaskStore } from '../../../store/tasks';
 
 export const taskTypes = [
@@ -8,26 +8,33 @@ export const taskTypes = [
   { value: 'decomiso', label: 'Decomiso' },
   { value: 'habilitacion', label: 'Habilitación' },
   { value: 'planos', label: 'Planos' },
-];
+] as const;
 
-export const TaskTypeSelect = () => {
+export type TaskType = typeof taskTypes[number]['value'];
+
+export const TaskTypeSelect = memo(() => {
   const { filters, setFilters } = useTaskStore();
 
-  const handleTypeChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
-    const values = Array.from(e.target.selectedOptions, option => option.value);
+  const handleTypeChange = useCallback((e: React.ChangeEvent<HTMLSelectElement>) => {
+    const values = Array.from(e.target.selectedOptions, option => option.value as TaskType);
     setFilters({ type: values });
-  };
+  }, [setFilters]);
 
   return (
     <div>
-      <label className="block text-sm font-medium text-gray-700 mb-1">
+      <label 
+        htmlFor="task-type-select"
+        className="block text-sm font-medium text-gray-700 mb-1"
+      >
         Tipo
       </label>
       <select
+        id="task-type-select"
         multiple
         value={filters.type}
         onChange={handleTypeChange}
-        className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 min-h-[120px]"
+        className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 min-h-[120px] transition-colors duration-200"
+        aria-label="Seleccionar tipos de tareas"
       >
         {taskTypes.map((type) => (
           <option key={type.value} value={type.value}>
@@ -42,4 +49,6 @@ export const TaskTypeSelect = () => {
       )}
     </div>
   );
-};
+});
+
+TaskTypeSelect.displayName = 'TaskTypeSelect';

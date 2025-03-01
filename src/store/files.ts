@@ -1,7 +1,6 @@
 import { create } from 'zustand';
 import { File, FileFormData, FileStatus } from '../types/file';
 import { fileService } from '../services/api';
-import type { File as ApiFile } from '../types/api';
 
 interface FileFilters {
   status: FileStatus[];
@@ -144,8 +143,8 @@ export const useFileStore = create<FileState>((set, get) => ({
       const searchLower = state.searchTerm.toLowerCase();
       filteredFiles = filteredFiles.filter(
         (file) =>
-          file.numeroExpediente.toLowerCase().includes(searchLower) ||
-          file.caratula.toLowerCase().includes(searchLower) ||
+          (file.numeroExpediente?.toLowerCase() || '').includes(searchLower) ||
+          (file.caratula?.toLowerCase() || '').includes(searchLower) ||
           (file.observaciones?.toLowerCase() || '').includes(searchLower)
       );
     }
