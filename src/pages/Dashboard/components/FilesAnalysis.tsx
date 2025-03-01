@@ -1,4 +1,3 @@
-import React from 'react';
 import { useFileStore } from '../../../store/files';
 import { differenceInDays, parseISO } from 'date-fns';
 import { AlertTriangle, Clock, CheckCircle2, AlertCircle } from 'lucide-react';
@@ -7,9 +6,8 @@ interface FileAnalysis {
   total: number;
   pendientes: number;
   completados: number;
-  tiempoPromedioResolucion: number;
   expedientesSinMovimiento: Array<{
-    numeroexpediente: string;
+    numeroExpediente: string;
     caratula: string;
     diasSinMovimiento: number;
   }>;
@@ -20,22 +18,12 @@ const FilesAnalysis = () => {
 
   const analyzeFiles = (): FileAnalysis => {
     const now = new Date();
-    let totalDiasResolucion = 0;
-    let expedientesResueltos = 0;
 
     const analysis = files.reduce(
       (acc, file) => {
         // Conteo por estado
         if (file.estado === 'completado') {
           acc.completados++;
-          if (file.fechasalida) {
-            const diasResolucion = differenceInDays(
-              parseISO(file.fechasalida),
-              parseISO(file.created_at)
-            );
-            totalDiasResolucion += diasResolucion;
-            expedientesResueltos++;
-          }
         } else {
           acc.pendientes++;
           // Verificar expedientes sin movimiento por más de 15 días
@@ -45,7 +33,7 @@ const FilesAnalysis = () => {
           );
           if (diasSinMovimiento > 15) {
             acc.expedientesSinMovimiento.push({
-              numeroexpediente: file.numeroexpediente,
+              numeroExpediente: file.numeroExpediente,
               caratula: file.caratula,
               diasSinMovimiento,
             });
@@ -57,14 +45,9 @@ const FilesAnalysis = () => {
         total: files.length,
         pendientes: 0,
         completados: 0,
-        tiempoPromedioResolucion: 0,
         expedientesSinMovimiento: [],
       } as FileAnalysis
     );
-
-    analysis.tiempoPromedioResolucion = expedientesResueltos
-      ? Math.round(totalDiasResolucion / expedientesResueltos)
-      : 0;
 
     return analysis;
   };
@@ -110,17 +93,6 @@ const FilesAnalysis = () => {
         </div>
       </div>
 
-      {/* Tiempo promedio de resolución */}
-      <div className="bg-white p-4 rounded-lg shadow-sm">
-        <div className="flex items-center gap-2 mb-2">
-          <Clock className="h-5 w-5 text-blue-600" />
-          <h3 className="text-lg font-semibold">Tiempo Promedio de Resolución</h3>
-        </div>
-        <p className="text-3xl font-bold text-blue-600">
-          {analysis.tiempoPromedioResolucion} días
-        </p>
-      </div>
-
       {/* Expedientes sin movimiento */}
       {analysis.expedientesSinMovimiento.length > 0 && (
         <div className="bg-white p-4 rounded-lg shadow-sm">
@@ -133,12 +105,12 @@ const FilesAnalysis = () => {
           <div className="space-y-3">
             {analysis.expedientesSinMovimiento.map((exp) => (
               <div
-                key={exp.numeroexpediente}
+                key={exp.numeroExpediente}
                 className="flex items-center justify-between p-3 bg-yellow-50 rounded-lg"
               >
                 <div>
                   <p className="font-medium text-gray-900">
-                    Expediente: {exp.numeroexpediente}
+                    Expediente: {exp.numeroExpediente}
                   </p>
                   <p className="text-sm text-gray-600">{exp.caratula}</p>
                 </div>

@@ -1,5 +1,4 @@
 import { useTaskStore } from '../store/tasks';
-import { Task } from '../types/task';
 import { isAfter, isBefore, parseISO } from 'date-fns';
 
 export function useTaskFilters() {
@@ -10,7 +9,7 @@ export function useTaskFilters() {
       return false;
     }
 
-    if (filters.type.length && !filters.type.includes(task.tipoActa)) {
+    if (filters.type.length && !filters.type.includes(task.tipo_acta)) {
       return false;
     }
 
@@ -45,6 +44,7 @@ export function useTaskFilters() {
       return sortConfig.direction === 'asc' ? aDate - bDate : bDate - aDate;
     }
 
+    if (aValue === undefined || bValue === undefined) return 0;
     if (aValue < bValue) return sortConfig.direction === 'asc' ? -1 : 1;
     if (aValue > bValue) return sortConfig.direction === 'asc' ? 1 : -1;
     return 0;

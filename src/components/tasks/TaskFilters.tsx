@@ -1,4 +1,3 @@
-import React from 'react';
 import { X } from 'lucide-react';
 import { useTaskStore } from '../../store/tasks';
 import { TaskTypeSelect } from './filters/TaskTypeSelect';

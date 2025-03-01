@@ -103,4 +103,34 @@ router.post('/', async (req: Request, res: Response) => {
   }
 });
 
+// Actualizar una tarea existente
+router.put('/:id', async (req: Request, res: Response) => {
+  try {
+    const taskId = req.params.id;
+    const updateData = req.body;
+
+    const data = await jsonDb.readData<TasksData>('tasks.json');
+    const taskIndex = data.tasks.findIndex(task => task.id === taskId);
+
+    if (taskIndex === -1) {
+      return res.status(404).json({ error: 'Tarea no encontrada' });
+    }
+
+    // Actualizar la tarea
+    const updatedTask = {
+      ...data.tasks[taskIndex],
+      ...updateData,
+      updated_at: new Date().toISOString()
+    };
+
+    data.tasks[taskIndex] = updatedTask;
+    await jsonDb.writeData('tasks.json', data);
+
+    return res.json(updatedTask);
+  } catch (error) {
+    console.error('Error al actualizar tarea:', error);
+    return res.status(500).json({ error: 'Error al actualizar tarea' });
+  }
+});
+
 export default router;

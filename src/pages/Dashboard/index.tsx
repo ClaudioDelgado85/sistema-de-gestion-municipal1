@@ -3,7 +3,6 @@ import TaskSummary from './components/TaskSummary';
 import TasksOverview from './components/TasksOverview';
 import UpcomingTasks from './components/UpcomingTasks';
 import FilesAnalysis from './components/FilesAnalysis';
-import RecentActivity from './components/RecentActivity';
 import DailyActivitiesReportButton from './components/DailyActivitiesReportButton';
 import { useTaskStore } from '../../store/tasks';
 import { useFileStore } from '../../store/files';
@@ -47,12 +46,6 @@ function Dashboard() {
         
         {/* Tareas próximas a vencer */}
         <UpcomingTasks />
-      </div>
-
-      {/* Actividad reciente */}
-      <div>
-        <h3 className="text-lg font-semibold mb-4">Actividad Reciente</h3>
-        <RecentActivity />
       </div>
     </div>
   );

@@ -10,12 +10,12 @@
       "infractor_dni": "123987",
       "infractor_domicilio": "por todos lados",
       "descripcion_falta": "vamos a ver si funciona",
-      "observaciones": null,
-      "estado": "pendiente",
+      "observaciones": "si",
+      "estado": "completada",
       "expediente_id": null,
       "created_by": 1,
       "created_at": "2025-02-27T19:46:58.656Z",
-      "updated_at": "2025-02-27T19:46:58.656Z"
+      "updated_at": "2025-03-01T20:30:08.318Z"
     },
     {
       "id": "6aec2bdb-2a50-4bad-b15e-039bfbf12d12",
@@ -27,12 +27,12 @@
       "infractor_dni": "45",
       "infractor_domicilio": "mi pc",
       "descripcion_falta": "seguimos probando",
-      "observaciones": null,
-      "estado": "pendiente",
+      "observaciones": "si",
+      "estado": "completada",
       "expediente_id": null,
       "created_by": 1,
       "created_at": "2025-02-27T20:27:20.657Z",
-      "updated_at": "2025-02-27T20:27:20.657Z"
+      "updated_at": "2025-03-01T20:30:14.748Z"
     },
     {
       "id": "39744f1a-d877-4b37-9ba2-8836a05b1c89",
@@ -44,12 +44,12 @@
       "infractor_dni": "2323",
       "infractor_domicilio": "en mi pc",
       "descripcion_falta": "por ser muy malo",
-      "observaciones": null,
-      "estado": "pendiente",
+      "observaciones": "si",
+      "estado": "completada",
       "expediente_id": null,
       "created_by": 1,
       "created_at": "2025-02-27T21:21:16.117Z",
-      "updated_at": "2025-02-27T21:21:16.117Z"
+      "updated_at": "2025-03-01T20:30:20.745Z"
     },
     {
       "id": "4e517f13-b813-48f4-8126-85e76d66d097",
@@ -61,12 +61,12 @@
       "infractor_dni": "3434",
       "infractor_domicilio": "en las alcantarillas",
       "descripcion_falta": "por ser muy lento",
-      "observaciones": null,
-      "estado": "pendiente",
+      "observaciones": "si",
+      "estado": "completada",
       "expediente_id": null,
       "created_by": 1,
       "created_at": "2025-02-28T11:43:54.748Z",
-      "updated_at": "2025-02-28T11:43:54.748Z"
+      "updated_at": "2025-03-01T20:29:24.387Z"
     }
   ]
 }

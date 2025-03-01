@@ -1,12 +1,8 @@
-import React from 'react';
 import { useTaskStore } from '../../../store/tasks';
 import { Task, TaskType } from '../../../types/task';
 import {
-  BarChart,
-  Bar,
-  XAxis,
-  YAxis,
-  CartesianGrid,
+  PieChart,
+  Pie,
   Tooltip,
   ResponsiveContainer,
   Cell,
@@ -74,33 +70,23 @@ const TasksOverview = () => {
       </div>
       <div className="h-[300px]">
         <ResponsiveContainer width="100%" height="100%">
-          <BarChart 
-            data={data} 
-            margin={{ top: 20, right: 30, left: 20, bottom: 5 }}
-            barSize={40}
-          >
-            <CartesianGrid strokeDasharray="3 3" stroke="#E5E7EB" />
-            <XAxis 
-              dataKey="tipo" 
-              axisLine={false}
-              tickLine={false}
-              tick={{ fill: '#6B7280', fontSize: 12 }}
-            />
-            <YAxis 
-              axisLine={false}
-              tickLine={false}
-              tick={{ fill: '#6B7280', fontSize: 12 }}
-            />
-            <Tooltip content={<CustomTooltip />} />
-            <Bar 
-              dataKey="cantidad" 
-              radius={[4, 4, 0, 0]}
+          <PieChart>
+            <Pie
+              data={data}
+              dataKey="cantidad"
+              nameKey="tipo"
+              cx="50%"
+              cy="50%"
+              innerRadius={60}
+              outerRadius={80}
+              paddingAngle={5}
             >
               {data.map((entry, index) => (
                 <Cell key={index} fill={entry.color} />
               ))}
-            </Bar>
-          </BarChart>
+            </Pie>
+            <Tooltip content={<CustomTooltip />} />
+          </PieChart>
         </ResponsiveContainer>
       </div>
       <div className="mt-4 grid grid-cols-2 sm:grid-cols-3 gap-2">
