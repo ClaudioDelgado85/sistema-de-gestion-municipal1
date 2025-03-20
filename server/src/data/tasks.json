@@ -67,6 +67,57 @@
       "created_by": 1,
       "created_at": "2025-02-28T11:43:54.748Z",
       "updated_at": "2025-03-01T20:29:24.387Z"
+    },
+    {
+      "id": "10412f48-a98c-47d5-b10a-3506c5a653ac",
+      "fecha": "2025-03-19",
+      "tipo_acta": "infraccion",
+      "numero_acta": "0001-0000334",
+      "plazo": null,
+      "infractor_nombre": "gaby bebe",
+      "infractor_dni": "101011",
+      "infractor_domicilio": "xxx",
+      "descripcion_falta": "por ser una princesita",
+      "observaciones": "se completo",
+      "estado": "completada",
+      "expediente_id": null,
+      "created_by": 1,
+      "created_at": "2025-03-19T00:22:05.295Z",
+      "updated_at": "2025-03-20T00:05:53.983Z"
+    },
+    {
+      "id": "0a5dea9c-7bca-40c9-aba4-b338a86ec660",
+      "fecha": "2025-03-19",
+      "tipo_acta": "intimacion",
+      "numero_acta": "0001-0000222",
+      "plazo": "2025-03-20",
+      "infractor_nombre": "tio gildo",
+      "infractor_dni": "34",
+      "infractor_domicilio": "formossa",
+      "descripcion_falta": "operativo",
+      "observaciones": "se completo",
+      "estado": "completada",
+      "expediente_id": null,
+      "created_by": 1,
+      "created_at": "2025-03-19T01:18:40.662Z",
+      "updated_at": "2025-03-20T00:06:01.806Z"
+    },
+    {
+      "id": "43b527f3-8452-462a-8140-647193546b90",
+      "fecha": "2025-03-19",
+      "tipo_acta": "intimacion",
+      "numero_acta": "0001-0000334",
+      "plazo": "2025-03-20",
+      "infractor_nombre": "la gabi bebe",
+      "infractor_dni": "1",
+      "infractor_domicilio": "en la panza de mama",
+      "descripcion_falta": "por ser tan bella",
+      "observaciones": "completado",
+      "estado": "completada",
+      "expediente_id": null,
+      "created_by": 1,
+      "created_at": "2025-03-20T00:19:30.820Z",
+      "updated_at": "2025-03-20T00:23:33.191Z"
     }
   ]
 }

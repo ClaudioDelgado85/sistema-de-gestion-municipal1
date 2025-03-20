@@ -75,19 +75,24 @@ function DailyActivitiesReportButton() {
     targetDate.setHours(0, 0, 0, 0);
 
     const filteredTasks = tasks.filter(task => {
-      const taskDate = new Date(task.fecha || task.created_at);
+      // Añadir 'T12:00:00' para asegurar que la fecha se interprete correctamente en la zona horaria local
+      const taskFecha = task.fecha || task.created_at;
+      const taskDateStr = taskFecha.includes('T') ? taskFecha : `${taskFecha}T12:00:00`;
+      const taskDate = new Date(taskDateStr);
       taskDate.setHours(0, 0, 0, 0);
       return taskDate.getTime() === targetDate.getTime();
     });
 
     const filteredActivities = activities.filter(activity => {
-      const activityDate = new Date(activity.created_at);
+      const activityDateStr = activity.created_at.includes('T') ? activity.created_at : `${activity.created_at}T12:00:00`;
+      const activityDate = new Date(activityDateStr);
       activityDate.setHours(0, 0, 0, 0);
       return activityDate.getTime() === targetDate.getTime();
     });
 
     const filteredCompletedFiles = files.filter(file => {
-      const fileDate = new Date(file.created_at);
+      const fileDateStr = file.created_at.includes('T') ? file.created_at : `${file.created_at}T12:00:00`;
+      const fileDate = new Date(fileDateStr);
       fileDate.setHours(0, 0, 0, 0);
       return fileDate.getTime() === targetDate.getTime() && file.estado === 'completado';
     });

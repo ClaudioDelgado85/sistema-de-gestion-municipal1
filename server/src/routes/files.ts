@@ -55,11 +55,11 @@ router.post('/', (req: Request, res: Response): Response => {
         
         const newFile = {
             id: maxId + 1,
-            numeroexpediente: numeroExpediente,
+            numeroExpediente: numeroExpediente,
             caratula,
             observaciones: observaciones || null,
             fecha,
-            fechasalida: fechaSalida || null,
+            fechaSalida: fechaSalida || null,
             destino: destino || null,
             estado: fechaSalida ? 'completado' : 'pendiente',
             created_by,
@@ -113,7 +113,7 @@ router.put('/:id', (req: Request, res: Response): Response => {
             caratula,
             observaciones: observaciones || null,
             fecha,
-            fechasalida: fechaSalida || null,
+            fechaSalida: fechaSalida || null,
             destino: destino || null,
             estado: fechaSalida ? 'completado' : 'pendiente',
             updated_at: new Date().toISOString()

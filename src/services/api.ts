@@ -130,7 +130,10 @@ export const fileService = {
     update: async (id: number, fileData: any) => {
         console.log('Actualizando expediente:', id, fileData);
         try {
-            const response = await api.put<File>(`/files/${id}`, fileData);
+            const response = await api.put<File>(`/files/${id}`, {
+                ...fileData,
+                estado: fileData.fechaSalida ? 'completado' : 'pendiente'
+            });
             return response.data;
         } catch (error) {
             console.error('Error al actualizar expediente:', error);

@@ -195,22 +195,28 @@ function TaskList({ onEdit }: TaskListProps) {
             <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Infractor</th>
             <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Domicilio</th>
             <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Descripción</th>
+            <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Observaciones</th>
             <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider cursor-pointer" onClick={() => handleSort('plazo')}>Plazo{sortConfig.key === 'plazo' && (<span className="ml-1">{sortConfig.direction === 'asc' ? '↑' : '↓'}</span>)}</th>
             <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Estado</th>
+            <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Creado</th>
+            <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Actualizado</th>
             <th scope="col" className="relative px-6 py-3"><span className="sr-only">Acciones</span></th>
           </tr>
         </thead>
         <tbody className="bg-white divide-y divide-gray-200">
           {sortedTasks.map((task) => (
             <tr key={task.id} className="hover:bg-gray-50">
-              <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{format(new Date(task.fecha), 'dd/MM/yyyy', { locale: es })}</td>
+              <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{format(new Date(task.fecha.includes('T') ? task.fecha : `${task.fecha}T12:00:00`), 'dd/MM/yyyy', { locale: es })}</td>
               <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{task.tipo_acta}</td>
               <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{task.numero_acta}</td>
               <td className="px-6 py-4 text-sm text-gray-900">{task.infractor_nombre}<br /><span className="text-gray-500">DNI: {task.infractor_dni}</span></td>
               <td className="px-6 py-4 text-sm text-gray-900">{task.infractor_domicilio}</td>
               <td className="px-6 py-4 text-sm text-gray-900">{task.descripcion_falta}</td>
-              <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{task.plazo && format(new Date(task.plazo), 'dd/MM/yyyy', { locale: es })}</td>
+              <td className="px-6 py-4 text-sm text-gray-900">{task.observaciones}</td>
+              <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{task.plazo && format(new Date(task.plazo.includes('T') ? task.plazo : `${task.plazo}T12:00:00`), 'dd/MM/yyyy', { locale: es })}</td>
               <td className="px-6 py-4 whitespace-nowrap"><span className={cn('px-2 inline-flex text-xs leading-5 font-semibold rounded-full', statusColors[task.estado])}>{task.estado}</span></td>
+              <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{format(new Date(task.created_at), 'dd/MM/yyyy HH:mm', { locale: es })}</td>
+              <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{format(new Date(task.updated_at), 'dd/MM/yyyy HH:mm', { locale: es })}</td>
               <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
                 <div className="flex justify-end space-x-2">
                   <button onClick={() => onEdit(task)} className="text-indigo-600 hover:text-indigo-900"><Edit className="h-5 w-5" /></button>

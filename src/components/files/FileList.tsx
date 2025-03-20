@@ -28,7 +28,9 @@ function FileList({ files, onEdit, onDelete }: FileListProps) {
   const formatDate = (dateString: string | null | undefined) => {
     if (!dateString) return '';
     try {
-      const date = new Date(dateString);
+      // Añadir 'T12:00:00' para asegurar que la fecha se interprete correctamente en la zona horaria local
+      const dateWithTime = dateString.includes('T') ? dateString : `${dateString}T12:00:00`;
+      const date = new Date(dateWithTime);
       return format(date, 'dd/MM/yyyy', { locale: es });
     } catch (error) {
       console.error('Error formateando fecha:', dateString, error);

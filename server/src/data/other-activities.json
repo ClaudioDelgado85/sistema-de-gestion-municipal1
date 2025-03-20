@@ -1,39 +1,6 @@
 {
   "activities": [
     {
-      "id": 1,
-      "fecha": "2024-02-27T03:00:00.000Z",
-      "descripcion": "Ejemplo de actividad",
-      "direccion": "Dirección de ejemplo",
-      "observaciones": "Observaciones de ejemplo",
-      "estado": "pendiente",
-      "created_by": 1,
-      "created_at": "2024-02-27T20:14:11.306Z",
-      "updated_at": "2024-02-27T20:14:11.306Z"
-    },
-    {
-      "id": 2,
-      "fecha": "2025-02-27",
-      "descripcion": "probando json23",
-      "direccion": "en mi pc23",
-      "observaciones": "",
-      "estado": "pendiente",
-      "created_by": 1,
-      "created_at": "2025-02-27T21:00:47.334Z",
-      "updated_at": "2025-02-27T21:00:47.334Z"
-    },
-    {
-      "id": 3,
-      "fecha": "2025-02-27",
-      "descripcion": "JsonX",
-      "direccion": "en mi pc",
-      "observaciones": "",
-      "estado": "pendiente",
-      "created_by": 1,
-      "created_at": "2025-02-27T21:22:20.612Z",
-      "updated_at": "2025-02-27T21:22:20.612Z"
-    },
-    {
       "id": 4,
       "fecha": "2025-02-28",
       "descripcion": "Leonardo la mejor tortuga",
@@ -43,6 +10,50 @@
       "created_by": 1,
       "created_at": "2025-02-28T11:46:48.363Z",
       "updated_at": "2025-02-28T11:46:48.363Z"
+    },
+    {
+      "id": 5,
+      "fecha": "2025-03-19",
+      "descripcion": "operativo tio gildo",
+      "direccion": "escuela 454",
+      "observaciones": "",
+      "estado": "pendiente",
+      "created_by": 1,
+      "created_at": "2025-03-19T01:15:19.903Z",
+      "updated_at": "2025-03-19T01:15:19.903Z"
+    },
+    {
+      "id": 6,
+      "fecha": "2025-03-19",
+      "descripcion": "operativo tio gildo",
+      "direccion": "escuela 454",
+      "observaciones": "",
+      "estado": "pendiente",
+      "created_by": 1,
+      "created_at": "2025-03-19T01:16:25.136Z",
+      "updated_at": "2025-03-19T01:16:25.136Z"
+    },
+    {
+      "id": 7,
+      "fecha": "2025-03-19",
+      "descripcion": "operativo la gaby bebe",
+      "direccion": "en la panza de su mama",
+      "observaciones": "",
+      "estado": "pendiente",
+      "created_by": 1,
+      "created_at": "2025-03-20T00:22:08.696Z",
+      "updated_at": "2025-03-20T00:22:08.696Z"
+    },
+    {
+      "id": 8,
+      "fecha": "2025-03-19",
+      "descripcion": "la gaby bebe2",
+      "direccion": "en la panza de su mama2",
+      "observaciones": "",
+      "estado": "pendiente",
+      "created_by": 1,
+      "created_at": "2025-03-20T00:48:54.367Z",
+      "updated_at": "2025-03-20T00:48:54.367Z"
     }
   ]
 }

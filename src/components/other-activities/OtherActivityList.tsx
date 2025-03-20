@@ -13,7 +13,9 @@ interface OtherActivityListProps {
 function OtherActivityList({ activities, onEdit, onDelete }: OtherActivityListProps) {
   const formatDate = (dateString: string | null | undefined) => {
     if (!dateString) return '';
-    return format(new Date(dateString), 'dd/MM/yyyy', { locale: es });
+    // Añadir 'T12:00:00' para asegurar que la fecha se interprete correctamente en la zona horaria local
+    const dateWithTime = dateString.includes('T') ? dateString : `${dateString}T12:00:00`;
+    return format(new Date(dateWithTime), 'dd/MM/yyyy', { locale: es });
   };
 
   return (
