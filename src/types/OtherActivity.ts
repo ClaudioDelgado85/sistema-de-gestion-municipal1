@@ -10,4 +10,7 @@ export interface OtherActivity {
     updated_at: string;
     created_by: number;
     created_by_name?: string;
+    direccion?: string;
+    fecha?: string;
+    observaciones?: string;
 }

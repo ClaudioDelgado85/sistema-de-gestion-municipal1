@@ -1,4 +1,4 @@
-import { FileDown, Loader2, Calendar } from 'lucide-react';
+import { FileDown, Loader2 } from 'lucide-react';
 import { useTaskStore } from '../../../store/tasks';
 import { useOtherActivitiesStore } from '../../../store/otherActivities';
 import { useFileStore } from '../../../store/files';
@@ -128,13 +128,13 @@ function DailyActivitiesReportButton() {
     const taskRows = data.tasks.map(task => [
       task.tipo_acta,
       task.numero_acta,
-      task.descripcion_falta,
-      task.estado
+      task.infractor_nombre,
+      task.descripcion_falta
     ]);
 
     (doc as any).autoTable({
       startY: 45,
-      head: [['Tipo', 'Número', 'Descripción', 'Estado']],
+      head: [['Tipo', 'Número de Acta', 'Nombre del Infractor', 'Descripción de la Falta']],
       body: taskRows,
     });
 
@@ -145,13 +145,12 @@ function DailyActivitiesReportButton() {
     const fileRows = data.files.map(file => [
       file.numeroExpediente,
       file.caratula,
-      file.destino || '',
-      file.observaciones || ''
+      file.destino || ''
     ]);
 
     (doc as any).autoTable({
       startY: currentY + 5,
-      head: [['Número', 'Carátula', 'Destino', 'Observaciones']],
+      head: [['Número de Expediente', 'Carátula', 'Destino']],
       body: fileRows,
     });
 
@@ -161,14 +160,12 @@ function DailyActivitiesReportButton() {
 
     const activityRows = data.otherActivities.map(activity => [
       activity.descripcion,
-      activity.tipo,
-      activity.estado,
-      new Date(activity.created_at).toLocaleDateString()
+      activity.direccion
     ]);
 
     (doc as any).autoTable({
       startY: currentY2 + 5,
-      head: [['Descripción', 'Tipo', 'Estado', 'Fecha']],
+      head: [['Descripción', 'Dirección']],
       body: activityRows,
     });
 
