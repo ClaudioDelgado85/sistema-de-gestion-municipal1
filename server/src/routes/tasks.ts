@@ -133,4 +133,27 @@ router.put('/:id', async (req: Request, res: Response) => {
   }
 });
 
+// Eliminar una tarea
+router.delete('/:id', async (req: Request, res: Response) => {
+  try {
+    const taskId = req.params.id;
+    
+    const data = await jsonDb.readData<TasksData>('tasks.json');
+    const taskIndex = data.tasks.findIndex(task => task.id === taskId);
+
+    if (taskIndex === -1) {
+      return res.status(404).json({ error: 'Tarea no encontrada' });
+    }
+
+    // Eliminar la tarea
+    data.tasks.splice(taskIndex, 1);
+    await jsonDb.writeData('tasks.json', data);
+
+    return res.json({ message: 'Tarea eliminada correctamente' });
+  } catch (error) {
+    console.error('Error al eliminar tarea:', error);
+    return res.status(500).json({ error: 'Error al eliminar tarea' });
+  }
+});
+
 export default router;

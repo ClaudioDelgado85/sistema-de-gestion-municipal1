@@ -1,17 +1,6 @@
 {
   "activities": [
     {
-      "id": 4,
-      "fecha": "2025-02-28",
-      "descripcion": "Leonardo la mejor tortuga",
-      "direccion": "en la alcantarilla",
-      "observaciones": "",
-      "estado": "pendiente",
-      "created_by": 1,
-      "created_at": "2025-02-28T11:46:48.363Z",
-      "updated_at": "2025-02-28T11:46:48.363Z"
-    },
-    {
       "id": 5,
       "fecha": "2025-03-19",
       "descripcion": "operativo tio gildo",
@@ -54,6 +43,17 @@
       "created_by": 1,
       "created_at": "2025-03-20T00:48:54.367Z",
       "updated_at": "2025-03-20T00:48:54.367Z"
+    },
+    {
+      "id": 9,
+      "fecha": "2025-03-20",
+      "descripcion": "hoy es jueves",
+      "direccion": "veinte",
+      "observaciones": "",
+      "estado": "pendiente",
+      "created_by": 1,
+      "created_at": "2025-03-21T00:57:00.615Z",
+      "updated_at": "2025-03-21T00:57:00.615Z"
     }
   ]
 }

@@ -10,7 +10,7 @@ import { useTaskStatus } from '../../hooks/useTaskStatus';
 function Tasks() {
   const [showForm, setShowForm] = useState(false);
   const [editingTask, setEditingTask] = useState<Task | null>(null);
-  const { tasks, addTask, updateTask, fetchTasks } = useTaskStore();
+  const { tasks, addTask, updateTask, fetchTasks, deleteTask } = useTaskStore();
 
   // Hook para manejar el estado de las tareas y notificaciones
   useTaskStatus(tasks);
@@ -45,6 +45,17 @@ function Tasks() {
   const handleEdit = (task: Task) => {
     setEditingTask(task);
     setShowForm(true);
+  };
+
+  const handleDelete = async (id: number) => {
+    if (window.confirm('¿Está seguro de que desea eliminar esta tarea?')) {
+      try {
+        await deleteTask(id);
+      } catch (error) {
+        console.error('Error al eliminar tarea:', error);
+        alert('Error al eliminar la tarea');
+      }
+    }
   };
 
   return (
@@ -83,7 +94,7 @@ function Tasks() {
         </div>
       ) : (
         <div className="bg-white shadow rounded-lg">
-          <TaskList onEdit={handleEdit} />
+          <TaskList onEdit={handleEdit} onDelete={handleDelete} />
         </div>
       )}
     </div>
