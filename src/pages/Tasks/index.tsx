@@ -9,6 +9,7 @@ import { useTaskStatus } from '../../hooks/useTaskStatus';
 
 function Tasks() {
   const [showForm, setShowForm] = useState(false);
+
   const [editingTask, setEditingTask] = useState<Task | null>(null);
   const { tasks, addTask, updateTask, fetchTasks, deleteTask } = useTaskStore();
 
@@ -47,17 +48,6 @@ function Tasks() {
     setShowForm(true);
   };
 
-  const handleDelete = async (id: number) => {
-    if (window.confirm('¿Está seguro de que desea eliminar esta tarea?')) {
-      try {
-        await deleteTask(id);
-      } catch (error) {
-        console.error('Error al eliminar tarea:', error);
-        alert('Error al eliminar la tarea');
-      }
-    }
-  };
-
   return (
     <div className="space-y-6">
       <div className="flex justify-between items-center">
@@ -94,7 +84,7 @@ function Tasks() {
         </div>
       ) : (
         <div className="bg-white shadow rounded-lg">
-          <TaskList onEdit={handleEdit} onDelete={handleDelete} />
+          <TaskList onEdit={handleEdit} onDelete={deleteTask} />
         </div>
       )}
     </div>

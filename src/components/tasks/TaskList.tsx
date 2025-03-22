@@ -8,7 +8,7 @@ import { cn } from '../../lib/utils';
 
 interface TaskListProps {
   onEdit: (task: Task) => void;
-  onDelete?: (id: number) => void;
+  onDelete: (id: number) => Promise<void>;
 }
 
 const statusColors: Record<TaskStatus, string> = {
@@ -99,8 +99,68 @@ function StatusChangeDialog({ isOpen, onClose, onConfirm, fromStatus, toStatus }
   );
 }
 
+interface DeleteDialogProps {
+  isOpen: boolean;
+  onClose: () => void;
+  onConfirm: () => void;
+  taskId: number;
+}
+
+function DeleteDialog({ isOpen, onClose, onConfirm, taskId }: DeleteDialogProps) {
+  if (!isOpen) return null;
+
+  return (
+    <div className="fixed inset-0 z-50 overflow-y-auto">
+      <div className="flex min-h-full items-end justify-center p-4 text-center sm:items-center sm:p-0">
+        <div className="fixed inset-0 bg-gray-500 bg-opacity-75 transition-opacity" onClick={onClose} />
+        <div className="relative transform overflow-hidden rounded-lg bg-white text-left shadow-xl transition-all sm:my-8 sm:w-full sm:max-w-lg">
+          <div className="bg-white px-4 pb-4 pt-5 sm:p-6 sm:pb-4">
+            <div className="absolute right-0 top-0 pr-4 pt-4">
+              <button
+                type="button"
+                className="rounded-md bg-white text-gray-400 hover:text-gray-500"
+                onClick={onClose}
+              >
+                <X className="h-6 w-6" />
+              </button>
+            </div>
+            <div className="sm:flex sm:items-start">
+              <div className="mt-3 text-center sm:ml-4 sm:mt-0 sm:text-left w-full">
+                <h3 className="text-lg font-semibold leading-6 text-gray-900">
+                  Confirmar eliminación
+                </h3>
+                <div className="mt-4">
+                  <p className="text-sm text-gray-500">
+                    ¿Estás seguro de que deseas eliminar esta tarea? Esta acción no se puede deshacer.
+                  </p>
+                </div>
+                <div className="mt-5 sm:mt-4 sm:flex sm:flex-row-reverse">
+                  <button
+                    type="button"
+                    className="inline-flex w-full justify-center rounded-md bg-red-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-red-500 sm:ml-3 sm:w-auto"
+                    onClick={onConfirm}
+                  >
+                    Eliminar
+                  </button>
+                  <button
+                    type="button"
+                    className="mt-3 inline-flex w-full justify-center rounded-md bg-white px-3 py-2 text-sm font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50 sm:mt-0 sm:w-auto"
+                    onClick={onClose}
+                  >
+                    Cancelar
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
 function TaskList({ onEdit, onDelete }: TaskListProps) {
-  const { filters, sortConfig, setSortConfig, updateTaskStatus, deleteTask } = useTaskStore();
+  const { filters, sortConfig, setSortConfig, updateTaskStatus } = useTaskStore();
   
   const filteredTasks = useTaskStore((state) => 
     state.tasks.filter((task) => {
@@ -117,11 +177,16 @@ function TaskList({ onEdit, onDelete }: TaskListProps) {
     })
   );
 
-  const [dialogState, setDialogState] = useState<{
+  const [statusDialogState, setStatusDialogState] = useState<{
     isOpen: boolean;
     taskId: number;
     fromStatus: TaskStatus;
     toStatus: TaskStatus;
+  } | null>(null);
+  
+  const [deleteDialogState, setDeleteDialogState] = useState<{
+    isOpen: boolean;
+    taskId: number;
   } | null>(null);
 
   const handleSort = (key: keyof Task) => {
@@ -158,7 +223,7 @@ function TaskList({ onEdit, onDelete }: TaskListProps) {
   }, [filteredTasks, sortConfig]);
 
   const handleStatusChange = (taskId: number, currentStatus: TaskStatus, newStatus: TaskStatus) => {
-    setDialogState({
+    setStatusDialogState({
       isOpen: true,
       taskId,
       fromStatus: currentStatus,
@@ -167,25 +232,49 @@ function TaskList({ onEdit, onDelete }: TaskListProps) {
   };
 
   const handleStatusChangeConfirm = (observaciones: string) => {
-    if (!dialogState) return;
+    if (!statusDialogState) return;
 
     updateTaskStatus({
-      taskId: dialogState.taskId,
-      newStatus: dialogState.toStatus,
+      taskId: statusDialogState.taskId,
+      newStatus: statusDialogState.toStatus,
       observaciones
     });
     
-    setDialogState(null);
+    setStatusDialogState(null);
+  };
+  
+  const handleDelete = (taskId: number) => {
+    setDeleteDialogState({
+      isOpen: true,
+      taskId
+    });
+  };
+  
+  const handleDeleteConfirm = async () => {
+    if (!deleteDialogState) return;
+    
+    try {
+      await onDelete(deleteDialogState.taskId);
+      setDeleteDialogState(null);
+    } catch (error) {
+      console.error('Error al eliminar tarea:', error);
+    }
   };
 
   return (
     <div className="overflow-x-auto">
       <StatusChangeDialog
-        isOpen={!!dialogState}
-        onClose={() => setDialogState(null)}
+        isOpen={!!statusDialogState}
+        onClose={() => setStatusDialogState(null)}
         onConfirm={handleStatusChangeConfirm}
-        fromStatus={dialogState?.fromStatus || 'pendiente'}
-        toStatus={dialogState?.toStatus || 'pendiente'}
+        fromStatus={statusDialogState?.fromStatus || 'pendiente'}
+        toStatus={statusDialogState?.toStatus || 'pendiente'}
+      />
+      <DeleteDialog
+        isOpen={!!deleteDialogState}
+        onClose={() => setDeleteDialogState(null)}
+        onConfirm={handleDeleteConfirm}
+        taskId={deleteDialogState?.taskId || 0}
       />
       <table className="min-w-full divide-y divide-gray-200">
         <thead className="bg-gray-50">
@@ -204,33 +293,23 @@ function TaskList({ onEdit, onDelete }: TaskListProps) {
         <tbody className="bg-white divide-y divide-gray-200">
           {sortedTasks.map((task) => (
             <tr key={task.id} className="hover:bg-gray-50">
-              <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{format(new Date(task.fecha), 'dd/MM/yyyy', { locale: es })}</td>
+              <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                {format(new Date(task.fecha.includes('T') ? task.fecha : `${task.fecha}T12:00:00`), 'dd/MM/yyyy', { locale: es })}
+              </td>
               <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{task.tipo_acta}</td>
               <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{task.numero_acta}</td>
               <td className="px-6 py-4 text-sm text-gray-900">{task.infractor_nombre}<br /><span className="text-gray-500">DNI: {task.infractor_dni}</span></td>
               <td className="px-6 py-4 text-sm text-gray-900">{task.infractor_domicilio}</td>
               <td className="px-6 py-4 text-sm text-gray-900">{task.descripcion_falta}</td>
-              <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{task.plazo && format(new Date(task.plazo), 'dd/MM/yyyy', { locale: es })}</td>
+              <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                {task.plazo && format(new Date(task.plazo.includes('T') ? task.plazo : `${task.plazo}T12:00:00`), 'dd/MM/yyyy', { locale: es })}
+              </td>
               <td className="px-6 py-4 whitespace-nowrap"><span className={cn('px-2 inline-flex text-xs leading-5 font-semibold rounded-full', statusColors[task.estado])}>{task.estado}</span></td>
               <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
                 <div className="flex justify-end space-x-2">
                   <button onClick={() => onEdit(task)} className="text-indigo-600 hover:text-indigo-900" title="Editar"><Edit className="h-5 w-5" /></button>
                   {task.estado === 'pendiente' && (<button onClick={() => handleStatusChange(task.id, task.estado, 'completada')} className="text-green-600 hover:text-green-900" title="Completar"><Clock className="h-5 w-5" /></button>)}
-                  <button 
-                    onClick={() => {
-                      if (window.confirm('¿Está seguro de que desea eliminar esta tarea?')) {
-                        if (onDelete) {
-                          onDelete(task.id);
-                        } else {
-                          deleteTask(task.id);
-                        }
-                      }
-                    }} 
-                    className="text-red-600 hover:text-red-900"
-                    title="Eliminar"
-                  >
-                    <Trash2 className="h-5 w-5" />
-                  </button>
+                  <button onClick={() => handleDelete(task.id)} className="text-red-600 hover:text-red-900" title="Eliminar"><Trash2 className="h-5 w-5" /></button>
                 </div>
               </td>
             </tr>

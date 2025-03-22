@@ -140,16 +140,16 @@ router.delete('/:id', async (req: Request, res: Response) => {
     
     const data = await jsonDb.readData<TasksData>('tasks.json');
     const taskIndex = data.tasks.findIndex(task => task.id === taskId);
-
+    
     if (taskIndex === -1) {
       return res.status(404).json({ error: 'Tarea no encontrada' });
     }
-
-    // Eliminar la tarea
+    
+    // Eliminar la tarea del array
     data.tasks.splice(taskIndex, 1);
     await jsonDb.writeData('tasks.json', data);
-
-    return res.json({ message: 'Tarea eliminada correctamente' });
+    
+    return res.json({ success: true, message: 'Tarea eliminada correctamente' });
   } catch (error) {
     console.error('Error al eliminar tarea:', error);
     return res.status(500).json({ error: 'Error al eliminar tarea' });
