@@ -1,4 +1,3 @@
-import React from 'react';
 import { useForm } from 'react-hook-form';
 import { OtherActivity, OtherActivityFormData } from '../../types/other-activity';
 
@@ -36,7 +35,7 @@ function OtherActivityForm({ onSubmit, onCancel, initialData }: OtherActivityFor
           <input
             type="date"
             {...register('fecha', { required: 'La fecha es requerida' })}
-            className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500"
+            className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 pl-3"
           />
           {errors.fecha && (
             <p className="mt-1 text-sm text-red-600">{errors.fecha.message}</p>
@@ -50,7 +49,7 @@ function OtherActivityForm({ onSubmit, onCancel, initialData }: OtherActivityFor
           <input
             type="text"
             {...register('descripcion', { required: 'La descripción es requerida' })}
-            className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500"
+            className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 pl-3"
           />
           {errors.descripcion && (
             <p className="mt-1 text-sm text-red-600">{errors.descripcion.message}</p>
@@ -64,7 +63,7 @@ function OtherActivityForm({ onSubmit, onCancel, initialData }: OtherActivityFor
           <input
             type="text"
             {...register('direccion', { required: 'La dirección es requerida' })}
-            className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500"
+            className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 pl-3"
           />
           {errors.direccion && (
             <p className="mt-1 text-sm text-red-600">{errors.direccion.message}</p>
@@ -78,7 +77,7 @@ function OtherActivityForm({ onSubmit, onCancel, initialData }: OtherActivityFor
           <textarea
             {...register('observaciones')}
             rows={3}
-            className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500"
+            className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 pl-3"
           />
         </div>
       </div>

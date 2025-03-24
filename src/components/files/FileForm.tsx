@@ -1,4 +1,3 @@
-import React from 'react';
 import { useForm } from 'react-hook-form';
 import { File, FileFormData } from '../../types/file';
 
@@ -9,7 +8,7 @@ interface FileFormProps {
 }
 
 function FileForm({ onSubmit, onCancel, initialData }: FileFormProps) {
-  const { register, handleSubmit, watch, formState: { errors } } = useForm<FileFormData>({
+  const { register, handleSubmit, formState: { errors } } = useForm<FileFormData>({
     defaultValues: initialData ? {
       ...initialData,
       fecha: initialData.fecha,
@@ -37,7 +36,7 @@ function FileForm({ onSubmit, onCancel, initialData }: FileFormProps) {
           <input
             type="date"
             {...register('fecha', { required: 'La fecha es requerida' })}
-            className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500"
+            className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 pl-3"
           />
           {errors.fecha && (
             <p className="mt-1 text-sm text-red-600">{errors.fecha.message}</p>
@@ -51,7 +50,7 @@ function FileForm({ onSubmit, onCancel, initialData }: FileFormProps) {
           <input
             type="text"
             {...register('numeroExpediente', { required: 'El número de expediente es requerido' })}
-            className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500"
+            className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 pl-3"
           />
           {errors.numeroExpediente && (
             <p className="mt-1 text-sm text-red-600">{errors.numeroExpediente.message}</p>
@@ -65,7 +64,7 @@ function FileForm({ onSubmit, onCancel, initialData }: FileFormProps) {
           <input
             type="text"
             {...register('caratula', { required: 'La carátula es requerida' })}
-            className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500"
+            className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 pl-3"
           />
           {errors.caratula && (
             <p className="mt-1 text-sm text-red-600">{errors.caratula.message}</p>
@@ -79,7 +78,7 @@ function FileForm({ onSubmit, onCancel, initialData }: FileFormProps) {
           <input
             type="date"
             {...register('fechaSalida')}
-            className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500"
+            className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 pl-3"
           />
         </div>
 
@@ -90,7 +89,7 @@ function FileForm({ onSubmit, onCancel, initialData }: FileFormProps) {
           <input
             type="text"
             {...register('destino')}
-            className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500"
+            className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 pl-3"
           />
         </div>
 
@@ -101,7 +100,7 @@ function FileForm({ onSubmit, onCancel, initialData }: FileFormProps) {
           <textarea
             {...register('observaciones')}
             rows={3}
-            className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500"
+            className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 pl-3"
           />
         </div>
       </div>

@@ -54,7 +54,7 @@ function TaskForm({ onSubmit, onCancel, initialData }: TaskFormProps) {
           <input
             type="date"
             {...register('fecha', { required: 'La fecha es requerida' })}
-            className="mt-1 block w-full rounded-md border-lavender-300 shadow-sm focus:border-lavender-500 focus:ring-lavender-500"
+            className="mt-1 block w-full rounded-md border-lavender-300 shadow-sm focus:border-lavender-500 focus:ring-lavender-500 pl-3"
           />
           {errors.fecha && (
             <p className="mt-1 text-sm text-red-600">{errors.fecha.message}</p>
@@ -67,7 +67,7 @@ function TaskForm({ onSubmit, onCancel, initialData }: TaskFormProps) {
           </label>
           <select
             {...register('tipo_acta', { required: 'El tipo de acta es requerido' })}
-            className="mt-1 block w-full rounded-md border-lavender-300 shadow-sm focus:border-lavender-500 focus:ring-lavender-500"
+            className="mt-1 block w-full rounded-md border-lavender-300 shadow-sm focus:border-lavender-500 focus:ring-lavender-500 pl-3"
           >
             <option value="">Seleccione un tipo</option>
             {taskTypes.map((type) => (
@@ -88,7 +88,7 @@ function TaskForm({ onSubmit, onCancel, initialData }: TaskFormProps) {
           <input
             type="text"
             {...register('numero_acta', { required: 'El número de acta es requerido' })}
-            className="mt-1 block w-full rounded-md border-lavender-300 shadow-sm focus:border-lavender-500 focus:ring-lavender-500"
+            className="mt-1 block w-full rounded-md border-lavender-300 shadow-sm focus:border-lavender-500 focus:ring-lavender-500 pl-3"
           />
           {errors.numero_acta && (
             <p className="mt-1 text-sm text-red-600">{errors.numero_acta.message}</p>
@@ -105,7 +105,7 @@ function TaskForm({ onSubmit, onCancel, initialData }: TaskFormProps) {
               {...register('plazo', { 
                 required: 'El plazo es requerido para intimaciones'
               })}
-              className="mt-1 block w-full rounded-md border-lavender-300 shadow-sm focus:border-lavender-500 focus:ring-lavender-500"
+              className="mt-1 block w-full rounded-md border-lavender-300 shadow-sm focus:border-lavender-500 focus:ring-lavender-500 pl-3"
             />
             {errors.plazo && (
               <p className="mt-1 text-sm text-red-600">{errors.plazo.message}</p>
@@ -120,7 +120,7 @@ function TaskForm({ onSubmit, onCancel, initialData }: TaskFormProps) {
           <input
             type="text"
             {...register('infractor_nombre', { required: 'El nombre es requerido' })}
-            className="mt-1 block w-full rounded-md border-lavender-300 shadow-sm focus:border-lavender-500 focus:ring-lavender-500"
+            className="mt-1 block w-full rounded-md border-lavender-300 shadow-sm focus:border-lavender-500 focus:ring-lavender-500 pl-3"
           />
           {errors.infractor_nombre && (
             <p className="mt-1 text-sm text-red-600">{errors.infractor_nombre.message}</p>
@@ -134,7 +134,7 @@ function TaskForm({ onSubmit, onCancel, initialData }: TaskFormProps) {
           <input
             type="text"
             {...register('infractor_dni', { required: 'El DNI es requerido' })}
-            className="mt-1 block w-full rounded-md border-lavender-300 shadow-sm focus:border-lavender-500 focus:ring-lavender-500"
+            className="mt-1 block w-full rounded-md border-lavender-300 shadow-sm focus:border-lavender-500 focus:ring-lavender-500 pl-3"
           />
           {errors.infractor_dni && (
             <p className="mt-1 text-sm text-red-600">{errors.infractor_dni.message}</p>
@@ -148,7 +148,7 @@ function TaskForm({ onSubmit, onCancel, initialData }: TaskFormProps) {
           <input
             type="text"
             {...register('infractor_domicilio', { required: 'El domicilio es requerido' })}
-            className="mt-1 block w-full rounded-md border-lavender-300 shadow-sm focus:border-lavender-500 focus:ring-lavender-500"
+            className="mt-1 block w-full rounded-md border-lavender-300 shadow-sm focus:border-lavender-500 focus:ring-lavender-500 pl-3"
           />
           {errors.infractor_domicilio && (
             <p className="mt-1 text-sm text-red-600">{errors.infractor_domicilio.message}</p>
@@ -162,7 +162,7 @@ function TaskForm({ onSubmit, onCancel, initialData }: TaskFormProps) {
           <textarea
             {...register('descripcion_falta', { required: 'La descripción es requerida' })}
             rows={3}
-            className="mt-1 block w-full rounded-md border-lavender-300 shadow-sm focus:border-lavender-500 focus:ring-lavender-500"
+            className="mt-1 block w-full rounded-md border-lavender-300 shadow-sm focus:border-lavender-500 focus:ring-lavender-500 pl-3"
           />
           {errors.descripcion_falta && (
             <p className="mt-1 text-sm text-red-600">{errors.descripcion_falta.message}</p>
@@ -176,7 +176,7 @@ function TaskForm({ onSubmit, onCancel, initialData }: TaskFormProps) {
           <textarea
             {...register('observaciones')}
             rows={2}
-            className="mt-1 block w-full rounded-md border-lavender-300 shadow-sm focus:border-lavender-500 focus:ring-lavender-500"
+            className="mt-1 block w-full rounded-md border-lavender-300 shadow-sm focus:border-lavender-500 focus:ring-lavender-500 pl-3"
           />
         </div>
       </div>
