@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Task, TaskStatus } from '../../types/task';
-import { Edit, Clock, X, Trash2 } from 'lucide-react';
+import { Edit, Clock, X, Trash2, ChevronLeft, ChevronRight } from 'lucide-react';
 import { format } from 'date-fns';
 import { es } from 'date-fns/locale';
 import { useTaskStore } from '../../store/tasks';
@@ -161,8 +161,10 @@ function DeleteDialog({ isOpen, onClose, onConfirm }: DeleteDialogProps) {
 
 function TaskList({ onEdit, onDelete }: TaskListProps) {
   const { sortConfig, setSortConfig, updateTaskStatus, getFilteredTasks } = useTaskStore();
+  const [currentPage, setCurrentPage] = useState(1);
+  const tasksPerPage = 10;
 
-  // Usar la función getFilteredTasks del store para obtener las tareas filtradas
+  // Obtener tareas filtradas
   const filteredTasks = useTaskStore(getFilteredTasks);
 
   const [statusDialogState, setStatusDialogState] = useState<{
@@ -210,6 +212,25 @@ function TaskList({ onEdit, onDelete }: TaskListProps) {
     });
   }, [filteredTasks, sortConfig]);
 
+  // Calcular paginación
+  const indexOfLastTask = currentPage * tasksPerPage;
+  const indexOfFirstTask = indexOfLastTask - tasksPerPage;
+  const currentTasks = sortedTasks.slice(indexOfFirstTask, indexOfLastTask);
+  const totalPages = Math.ceil(sortedTasks.length / tasksPerPage);
+
+  // Funciones de navegación
+  const nextPage = () => {
+    if (currentPage < totalPages) {
+      setCurrentPage(currentPage + 1);
+    }
+  };
+
+  const prevPage = () => {
+    if (currentPage > 1) {
+      setCurrentPage(currentPage - 1);
+    }
+  };
+
   const handleStatusChange = (taskId: number, currentStatus: TaskStatus, newStatus: TaskStatus) => {
     setStatusDialogState({
       isOpen: true,
@@ -250,7 +271,7 @@ function TaskList({ onEdit, onDelete }: TaskListProps) {
   };
 
   return (
-    <div className="overflow-x-auto">
+    <div>
       <StatusChangeDialog
         isOpen={!!statusDialogState}
         onClose={() => setStatusDialogState(null)}
@@ -264,68 +285,141 @@ function TaskList({ onEdit, onDelete }: TaskListProps) {
         onConfirm={handleDeleteConfirm}
         taskId={deleteDialogState?.taskId || 0}
       />
-      <table className="min-w-full divide-y divide-gray-200">
-        <thead className="bg-gray-50">
-          <tr>
-            <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider cursor-pointer" onClick={() => handleSort('fecha')}>Fecha{sortConfig.key === 'fecha' && (<span className="ml-1">{sortConfig.direction === 'asc' ? '↑' : '↓'}</span>)}</th>
-            <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Tipo</th>
-            <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Número</th>
-            <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Infractor</th>
-            <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Domicilio</th>
-            <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Descripción</th>
-            <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider cursor-pointer" onClick={() => handleSort('plazo')}>Plazo{sortConfig.key === 'plazo' && (<span className="ml-1">{sortConfig.direction === 'asc' ? '↑' : '↓'}</span>)}</th>
-            <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Estado</th>
-            <th scope="col" className="relative px-6 py-3"><span className="sr-only">Acciones</span></th>
-          </tr>
-        </thead>
-        <tbody className="bg-white divide-y divide-gray-200">
-          {sortedTasks.map((task) => (
-            <tr key={task.id} className="hover:bg-gray-50">
-              <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                {format(new Date(task.fecha.includes('T') ? task.fecha : `${task.fecha}T12:00:00`), 'dd/MM/yyyy', { locale: es })}
-              </td>
-              <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{task.tipo_acta}</td>
-              <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{task.numero_acta}</td>
-              <td className="px-6 py-4 text-sm text-gray-900">{task.infractor_nombre}<br /><span className="text-gray-500">DNI: {task.infractor_dni}</span></td>
-              <td className="px-6 py-4 text-sm text-gray-900">{task.infractor_domicilio}</td>
-              <td className="px-6 py-4 text-sm text-gray-900">{task.descripcion_falta}</td>
-              <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                {task.plazo && format(new Date(task.plazo.includes('T') ? task.plazo : `${task.plazo}T12:00:00`), 'dd/MM/yyyy', { locale: es })}
-              </td>
-              <td className="px-6 py-4 whitespace-nowrap"><span className={cn('px-2 inline-flex text-xs leading-5 font-semibold rounded-full', statusColors[task.estado])}>{task.estado}</span></td>
-              <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
-                <div className="flex justify-end space-x-2">
-                  <button
-                    onClick={() => onEdit(task)}
-                    className="group relative text-indigo-600 hover:text-indigo-900"
-                  >
-                    <Edit className="h-5 w-5" />
-                    <span className="invisible group-hover:visible absolute -top-8 left-1/2 -translate-x-1/2 px-2 py-1 bg-gray-800 text-white text-xs rounded">
-                      Editar tarea
-                    </span>
-                  </button>
-                  {task.estado === 'pendiente' && (
-                    <button
-                      onClick={() => handleStatusChange(task.id, task.estado, 'completada')}
-                      className="text-green-600 hover:text-green-900"
-                      title="Completar"
-                    >
-                      <Clock className="h-5 w-5" />
-                    </button>
-                  )}
-                  <button
-                    onClick={() => handleDelete(task.id)}
-                    className="text-red-600 hover:text-red-900"
-                    title="Eliminar"
-                  >
-                    <Trash2 className="h-5 w-5" />
-                  </button>
-                </div>
-              </td>
+      <div className="overflow-x-auto">
+        <table className="min-w-full divide-y divide-gray-200">
+          <thead className="bg-gray-50">
+            <tr>
+              <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider cursor-pointer" onClick={() => handleSort('fecha')}>Fecha{sortConfig.key === 'fecha' && (<span className="ml-1">{sortConfig.direction === 'asc' ? '↑' : '↓'}</span>)}</th>
+              <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Tipo</th>
+              <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Número</th>
+              <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Infractor</th>
+              <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Domicilio</th>
+              <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Descripción</th>
+              <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider cursor-pointer" onClick={() => handleSort('plazo')}>Plazo{sortConfig.key === 'plazo' && (<span className="ml-1">{sortConfig.direction === 'asc' ? '↑' : '↓'}</span>)}</th>
+              <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Estado</th>
+              <th scope="col" className="relative px-6 py-3"><span className="sr-only">Acciones</span></th>
             </tr>
-          ))}
-        </tbody>
-      </table>
+          </thead>
+          <tbody className="bg-white divide-y divide-gray-200">
+            {currentTasks.map((task) => (
+              <tr key={task.id} className="hover:bg-gray-50">
+                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                  {format(new Date(task.fecha.includes('T') ? task.fecha : `${task.fecha}T12:00:00`), 'dd/MM/yyyy', { locale: es })}
+                </td>
+                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{task.tipo_acta}</td>
+                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{task.numero_acta}</td>
+                <td className="px-6 py-4 text-sm text-gray-900">{task.infractor_nombre}<br /><span className="text-gray-500">DNI: {task.infractor_dni}</span></td>
+                <td className="px-6 py-4 text-sm text-gray-900">{task.infractor_domicilio}</td>
+                <td className="px-6 py-4 text-sm text-gray-900">{task.descripcion_falta}</td>
+                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                  {task.plazo && format(new Date(task.plazo.includes('T') ? task.plazo : `${task.plazo}T12:00:00`), 'dd/MM/yyyy', { locale: es })}
+                </td>
+                <td className="px-6 py-4 whitespace-nowrap"><span className={cn('px-2 inline-flex text-xs leading-5 font-semibold rounded-full', statusColors[task.estado])}>{task.estado}</span></td>
+                <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
+                  <div className="flex justify-end space-x-2">
+                    <button
+                      onClick={() => onEdit(task)}
+                      className="group relative text-indigo-600 hover:text-indigo-900"
+                    >
+                      <Edit className="h-5 w-5" />
+                      <span className="invisible group-hover:visible absolute -top-8 left-1/2 -translate-x-1/2 px-2 py-1 bg-gray-800 text-white text-xs rounded">
+                        Editar tarea
+                      </span>
+                    </button>
+                    {task.estado === 'pendiente' && (
+                      <button
+                        onClick={() => handleStatusChange(task.id, task.estado, 'completada')}
+                        className="text-green-600 hover:text-green-900"
+                        title="Completar"
+                      >
+                        <Clock className="h-5 w-5" />
+                      </button>
+                    )}
+                    <button
+                      onClick={() => handleDelete(task.id)}
+                      className="text-red-600 hover:text-red-900"
+                      title="Eliminar"
+                    >
+                      <Trash2 className="h-5 w-5" />
+                    </button>
+                  </div>
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+
+      {/* Paginación */}
+      <div className="px-4 py-3 flex items-center justify-between border-t border-gray-200 sm:px-6">
+        <div className="flex-1 flex justify-between sm:hidden">
+          <button
+            onClick={prevPage}
+            disabled={currentPage === 1}
+            className="relative inline-flex items-center px-4 py-2 border border-gray-300 text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 disabled:bg-gray-100 disabled:cursor-not-allowed"
+          >
+            Anterior
+          </button>
+          <button
+            onClick={nextPage}
+            disabled={currentPage === totalPages}
+            className="ml-3 relative inline-flex items-center px-4 py-2 border border-gray-300 text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 disabled:bg-gray-100 disabled:cursor-not-allowed"
+          >
+            Siguiente
+          </button>
+        </div>
+        <div className="hidden sm:flex-1 sm:flex sm:items-center sm:justify-between">
+          <div>
+            <p className="text-sm text-gray-700">
+              Mostrando{' '}
+              <span className="font-medium">{indexOfFirstTask + 1}</span>
+              {' '}-{' '}
+              <span className="font-medium">
+                {Math.min(indexOfLastTask, sortedTasks.length)}
+              </span>
+              {' '}de{' '}
+              <span className="font-medium">{sortedTasks.length}</span>
+              {' '}resultados
+            </p>
+          </div>
+          <div>
+            <nav className="relative z-0 inline-flex rounded-md shadow-sm -space-x-px" aria-label="Pagination">
+              <button
+                onClick={prevPage}
+                disabled={currentPage === 1}
+                className="relative inline-flex items-center px-2 py-2 rounded-l-md border border-gray-300 bg-white text-sm font-medium text-gray-500 hover:bg-gray-50 disabled:bg-gray-100 disabled:cursor-not-allowed"
+              >
+                <span className="sr-only">Anterior</span>
+                <ChevronLeft className="h-5 w-5" />
+              </button>
+
+              {/* Números de página */}
+              {[...Array(totalPages)].map((_, idx) => (
+                <button
+                  key={idx + 1}
+                  onClick={() => setCurrentPage(idx + 1)}
+                  className={`relative inline-flex items-center px-4 py-2 border text-sm font-medium ${
+                    currentPage === idx + 1
+                      ? 'z-10 bg-indigo-50 border-indigo-500 text-indigo-600'
+                      : 'bg-white border-gray-300 text-gray-500 hover:bg-gray-50'
+                  }`}
+                >
+                  {idx + 1}
+                </button>
+              ))}
+
+              <button
+                onClick={nextPage}
+                disabled={currentPage === totalPages}
+                className="relative inline-flex items-center px-2 py-2 rounded-r-md border border-gray-300 bg-white text-sm font-medium text-gray-500 hover:bg-gray-50 disabled:bg-gray-100 disabled:cursor-not-allowed"
+              >
+                <span className="sr-only">Siguiente</span>
+                <ChevronRight className="h-5 w-5" />
+              </button>
+            </nav>
+          </div>
+        </div>
+      </div>
     </div>
   );
 }

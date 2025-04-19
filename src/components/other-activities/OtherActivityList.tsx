@@ -1,5 +1,5 @@
-import React from 'react';
-import { Edit, Trash2 } from 'lucide-react';
+import React, { useState } from 'react';
+import { Edit, Trash2, ChevronLeft, ChevronRight } from 'lucide-react';
 import { OtherActivity } from '../../types/other-activity';
 import { format } from 'date-fns';
 import { es } from 'date-fns/locale';
@@ -11,9 +11,30 @@ interface OtherActivityListProps {
 }
 
 function OtherActivityList({ activities, onEdit, onDelete }: OtherActivityListProps) {
+  const [currentPage, setCurrentPage] = useState(1);
+  const activitiesPerPage = 10;
+
+  // Calcular paginación
+  const indexOfLastActivity = currentPage * activitiesPerPage;
+  const indexOfFirstActivity = indexOfLastActivity - activitiesPerPage;
+  const currentActivities = activities.slice(indexOfFirstActivity, indexOfLastActivity);
+  const totalPages = Math.ceil(activities.length / activitiesPerPage);
+
+  // Funciones de navegación
+  const nextPage = () => {
+    if (currentPage < totalPages) {
+      setCurrentPage(currentPage + 1);
+    }
+  };
+
+  const prevPage = () => {
+    if (currentPage > 1) {
+      setCurrentPage(currentPage - 1);
+    }
+  };
+
   const formatDate = (dateString: string | null | undefined) => {
     if (!dateString) return '';
-    // Añadir 'T12:00:00' para asegurar que la fecha se interprete correctamente en la zona horaria local
     const dateWithTime = dateString.includes('T') ? dateString : `${dateString}T12:00:00`;
     return format(new Date(dateWithTime), 'dd/MM/yyyy', { locale: es });
   };
@@ -44,7 +65,7 @@ function OtherActivityList({ activities, onEdit, onDelete }: OtherActivityListPr
                 </tr>
               </thead>
               <tbody className="divide-y divide-gray-200 bg-white">
-                {activities.map((activity) => (
+                {currentActivities.map((activity) => (
                   <tr key={activity.id}>
                     <td className="whitespace-nowrap py-4 pl-4 pr-3 text-sm text-gray-900 sm:pl-6">
                       {formatDate(activity.fecha)}
@@ -80,6 +101,77 @@ function OtherActivityList({ activities, onEdit, onDelete }: OtherActivityListPr
                 ))}
               </tbody>
             </table>
+          </div>
+        </div>
+      </div>
+
+      {/* Paginación */}
+      <div className="px-4 py-3 flex items-center justify-between border-t border-gray-200 sm:px-6">
+        <div className="flex-1 flex justify-between sm:hidden">
+          <button
+            onClick={prevPage}
+            disabled={currentPage === 1}
+            className="relative inline-flex items-center px-4 py-2 border border-gray-300 text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 disabled:bg-gray-100 disabled:cursor-not-allowed"
+          >
+            Anterior
+          </button>
+          <button
+            onClick={nextPage}
+            disabled={currentPage === totalPages}
+            className="ml-3 relative inline-flex items-center px-4 py-2 border border-gray-300 text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 disabled:bg-gray-100 disabled:cursor-not-allowed"
+          >
+            Siguiente
+          </button>
+        </div>
+        <div className="hidden sm:flex-1 sm:flex sm:items-center sm:justify-between">
+          <div>
+            <p className="text-sm text-gray-700">
+              Mostrando{' '}
+              <span className="font-medium">{indexOfFirstActivity + 1}</span>
+              {' '}-{' '}
+              <span className="font-medium">
+                {Math.min(indexOfLastActivity, activities.length)}
+              </span>
+              {' '}de{' '}
+              <span className="font-medium">{activities.length}</span>
+              {' '}resultados
+            </p>
+          </div>
+          <div>
+            <nav className="relative z-0 inline-flex rounded-md shadow-sm -space-x-px" aria-label="Pagination">
+              <button
+                onClick={prevPage}
+                disabled={currentPage === 1}
+                className="relative inline-flex items-center px-2 py-2 rounded-l-md border border-gray-300 bg-white text-sm font-medium text-gray-500 hover:bg-gray-50 disabled:bg-gray-100 disabled:cursor-not-allowed"
+              >
+                <span className="sr-only">Anterior</span>
+                <ChevronLeft className="h-5 w-5" />
+              </button>
+
+              {/* Números de página */}
+              {[...Array(totalPages)].map((_, idx) => (
+                <button
+                  key={idx + 1}
+                  onClick={() => setCurrentPage(idx + 1)}
+                  className={`relative inline-flex items-center px-4 py-2 border text-sm font-medium ${
+                    currentPage === idx + 1
+                      ? 'z-10 bg-indigo-50 border-indigo-500 text-indigo-600'
+                      : 'bg-white border-gray-300 text-gray-500 hover:bg-gray-50'
+                  }`}
+                >
+                  {idx + 1}
+                </button>
+              ))}
+
+              <button
+                onClick={nextPage}
+                disabled={currentPage === totalPages}
+                className="relative inline-flex items-center px-2 py-2 rounded-r-md border border-gray-300 bg-white text-sm font-medium text-gray-500 hover:bg-gray-50 disabled:bg-gray-100 disabled:cursor-not-allowed"
+              >
+                <span className="sr-only">Siguiente</span>
+                <ChevronRight className="h-5 w-5" />
+              </button>
+            </nav>
           </div>
         </div>
       </div>
