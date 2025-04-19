@@ -1,4 +1,4 @@
-import React from 'react';
+import { useNavigate } from 'react-router-dom';
 import { useTaskStore } from '../../../store/tasks';
 import { Task } from '../../../types/task';
 import { formatDistanceToNow, parseISO, isAfter } from 'date-fns';
@@ -7,6 +7,7 @@ import { AlertTriangle } from 'lucide-react';
 
 const UpcomingTasks = () => {
   const tasks = useTaskStore((state) => state.tasks);
+  const navigate = useNavigate();
 
   const getUpcomingTasks = (tasks: Task[]) => {
     return tasks
@@ -25,6 +26,11 @@ const UpcomingTasks = () => {
 
   const upcomingTasks = getUpcomingTasks(tasks);
 
+  const handleTaskClick = (taskId: number) => {
+    // Navegar a la página de tareas y pasar el ID como state para poder resaltar la tarea
+    navigate('/tasks', { state: { highlightTaskId: taskId } });
+  };
+
   return (
     <div className="bg-white p-4 rounded-lg shadow-sm">
       <div className="flex items-center justify-between mb-4">
@@ -36,7 +42,8 @@ const UpcomingTasks = () => {
           {upcomingTasks.map((task) => (
             <div
               key={task.id}
-              className="flex items-center justify-between p-3 bg-gray-50 rounded-lg"
+              onClick={() => handleTaskClick(task.id)}
+              className="flex items-center justify-between p-3 bg-gray-50 rounded-lg hover:bg-gray-100 cursor-pointer transition-colors duration-200"
             >
               <div>
                 <p className="font-medium text-gray-900">

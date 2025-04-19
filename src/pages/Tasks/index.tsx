@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { Plus } from 'lucide-react';
 import TaskList from '../../components/tasks/TaskList';
 import TaskForm from './components/TaskForm';
@@ -6,17 +6,38 @@ import TaskSearch from '../../components/tasks/TaskSearch';
 import { Task, TaskFormData } from '../../types/task';
 import { useTaskStore } from '../../store/tasks';
 import { useTaskStatus } from '../../hooks/useTaskStatus';
+import { useLocation } from 'react-router-dom';
+
+interface LocationState {
+  highlightTaskId?: number;
+}
 
 function Tasks() {
+  const location = useLocation();
+  const { highlightTaskId } = (location.state as LocationState) || {};
   const [showForm, setShowForm] = useState(false);
-
   const [editingTask, setEditingTask] = useState<Task | null>(null);
   const { tasks, addTask, updateTask, fetchTasks, deleteTask } = useTaskStore();
 
   // Hook para manejar el estado de las tareas y notificaciones
   useTaskStatus(tasks);
 
-  // Cargar tareas al montar el componente y cuando cambie el estado
+  useEffect(() => {
+    if (highlightTaskId) {
+      // Encontrar el elemento de la tarea y scrollear hasta él
+      const taskElement = document.getElementById(`task-${highlightTaskId}`);
+      if (taskElement) {
+        taskElement.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        // Agregar una clase temporal para resaltar
+        taskElement.classList.add('highlight-task');
+        // Remover la clase después de la animación
+        setTimeout(() => {
+          taskElement.classList.remove('highlight-task');
+        }, 3000);
+      }
+    }
+  }, [highlightTaskId]);
+
   useEffect(() => {
     fetchTasks().catch(console.error);
   }, [fetchTasks]);
@@ -84,7 +105,11 @@ function Tasks() {
         </div>
       ) : (
         <div className="bg-white shadow rounded-lg">
-          <TaskList onEdit={handleEdit} onDelete={deleteTask} />
+          <TaskList
+            onEdit={handleEdit}
+            onDelete={deleteTask}
+            highlightTaskId={highlightTaskId}
+          />
         </div>
       )}
     </div>

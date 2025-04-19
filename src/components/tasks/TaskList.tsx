@@ -9,6 +9,7 @@ import { cn } from '../../lib/utils';
 interface TaskListProps {
   onEdit: (task: Task) => void;
   onDelete: (id: number) => Promise<void>;
+  highlightTaskId?: number;
 }
 
 const statusColors: Record<TaskStatus, string> = {
@@ -159,7 +160,7 @@ function DeleteDialog({ isOpen, onClose, onConfirm }: DeleteDialogProps) {
   );
 }
 
-function TaskList({ onEdit, onDelete }: TaskListProps) {
+function TaskList({ onEdit, onDelete, highlightTaskId }: TaskListProps) {
   const { sortConfig, setSortConfig, updateTaskStatus, getFilteredTasks } = useTaskStore();
   const [currentPage, setCurrentPage] = useState(1);
   const tasksPerPage = 10;
@@ -302,7 +303,11 @@ function TaskList({ onEdit, onDelete }: TaskListProps) {
           </thead>
           <tbody className="bg-white divide-y divide-gray-200">
             {currentTasks.map((task) => (
-              <tr key={task.id} className="hover:bg-gray-50">
+              <tr
+                key={task.id}
+                id={highlightTaskId === task.id ? `task-${task.id}` : undefined}
+                className="hover:bg-gray-50"
+              >
                 <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
                   {format(new Date(task.fecha.includes('T') ? task.fecha : `${task.fecha}T12:00:00`), 'dd/MM/yyyy', { locale: es })}
                 </td>
