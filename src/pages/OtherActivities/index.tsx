@@ -3,23 +3,24 @@ import useOtherActivityStore from '../../store/other-activities';
 import { OtherActivity } from '../../types/other-activity';
 import OtherActivityForm from '../../components/other-activities/OtherActivityForm';
 import OtherActivityList from '../../components/other-activities/OtherActivityList';
-import SearchBar from '../../components/common/SearchBar';
+import UnifiedSearchBar from '../../components/common/UnifiedSearchBar';
 
 function OtherActivities() {
   console.log('Rendering OtherActivities component'); // Debug log
   const [showForm, setShowForm] = useState(false);
   const [editingActivity, setEditingActivity] = useState<OtherActivity | null>(null);
   const [error, setError] = useState<string | null>(null);
-  
-  const { 
-    addActivity, 
-    updateActivity, 
-    deleteActivity, 
-    getFilteredActivities, 
+
+  const {
+    addActivity,
+    updateActivity,
+    deleteActivity,
+    getFilteredActivities,
     fetchActivities,
-    setSearchTerm 
+    searchTerm,
+    setSearchTerm
   } = useOtherActivityStore();
-  
+
   const filteredActivities = getFilteredActivities();
 
   useEffect(() => {
@@ -32,7 +33,7 @@ function OtherActivities() {
         setError('Error al cargar las actividades. Por favor, intente nuevamente.');
       }
     };
-    
+
     loadActivities();
   }, [fetchActivities]);
 
@@ -103,7 +104,11 @@ function OtherActivities() {
       )}
 
       <div className="mt-8">
-        <SearchBar onSearch={setSearchTerm} placeholder="Buscar actividades..." />
+        <UnifiedSearchBar
+          searchTerm={searchTerm}
+          onSearch={setSearchTerm}
+          placeholder="Buscar actividades..."
+        />
       </div>
 
       {showForm ? (

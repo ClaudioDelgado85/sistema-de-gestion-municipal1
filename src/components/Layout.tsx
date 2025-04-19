@@ -3,10 +3,16 @@ import { Outlet } from 'react-router-dom';
 import { FileText, ClipboardList, Home, Bell, LogOut } from 'lucide-react';
 import Sidebar from './Sidebar';
 import Navbar from './Navbar';
+import { useTheme } from '../context/ThemeContext';
 
 function Layout() {
+  const { theme, isDarkMode } = useTheme();
+
   return (
-    <div className="min-h-screen bg-gray-50 dark:bg-gray-900 transition-colors duration-200">
+    <div
+      className="min-h-screen dark:bg-gray-900 transition-colors duration-200"
+      style={{ backgroundColor: isDarkMode ? '' : (theme?.background || '#F9FAFB') }}
+    >
       <Navbar />
       <div className="flex">
         <Sidebar />

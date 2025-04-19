@@ -1,5 +1,5 @@
-import React, { useState } from 'react';
-import { Link, useLocation } from 'react-router-dom';
+import { useState, useEffect } from 'react';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { Home, FileText, ClipboardList, LogOut, ChevronLeft, ChevronRight, Activity } from 'lucide-react';
 import { cn } from '../lib/utils';
 import { useAuthStore } from '../store/auth';
@@ -15,9 +15,22 @@ function Sidebar() {
   const location = useLocation();
   const logout = useAuthStore((state) => state.logout);
   const [isCollapsed, setIsCollapsed] = useState(false);
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    const handleKeyPress = (e: KeyboardEvent) => {
+      if (e.ctrlKey && e.key === 'n') {
+        // Atajo para nueva tarea
+        navigate('/tasks/new');
+      }
+    };
+
+    window.addEventListener('keydown', handleKeyPress);
+    return () => window.removeEventListener('keydown', handleKeyPress);
+  }, []);
 
   return (
-    <div 
+    <div
       className={cn(
         "border-r min-h-screen transition-all duration-200 relative bg-white dark:bg-gray-800 border-gray-200 dark:border-gray-700",
         isCollapsed ? "w-16" : "w-64"

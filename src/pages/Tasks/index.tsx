@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Plus } from 'lucide-react';
 import TaskList from '../../components/tasks/TaskList';
 import TaskForm from './components/TaskForm';
-import TaskFilters from '../../components/tasks/TaskFilters';
+import TaskSearch from '../../components/tasks/TaskSearch';
 import { Task, TaskFormData } from '../../types/task';
 import { useTaskStore } from '../../store/tasks';
 import { useTaskStatus } from '../../hooks/useTaskStatus';
@@ -69,7 +69,7 @@ function Tasks() {
         </button>
       </div>
 
-      <TaskFilters />
+      <TaskSearch />
 
       {showForm ? (
         <div className="bg-white shadow rounded-lg p-6">

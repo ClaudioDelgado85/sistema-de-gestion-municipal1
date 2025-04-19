@@ -4,12 +4,12 @@ import { File, FileFormData } from '../../types/file';
 import { useFileStore } from '../../store/files';
 import FileList from '../../components/files/FileList';
 import FileForm from '../../components/files/FileForm';
-import FileSearch from '../../components/files/FileSearch';
+import UnifiedSearchBar from '../../components/common/UnifiedSearchBar';
 
 function Files() {
   const [showForm, setShowForm] = useState(false);
   const [editingFile, setEditingFile] = useState<File | null>(null);
-  const { addFile, updateFile, deleteFile, getFilteredFiles, fetchFiles } = useFileStore();
+  const { addFile, updateFile, deleteFile, getFilteredFiles, fetchFiles, searchTerm, setSearchTerm, setFilters } = useFileStore();
   const filteredFiles = getFilteredFiles();
 
   useEffect(() => {
@@ -75,7 +75,19 @@ function Files() {
         </button>
       </div>
 
-      {!showForm && <FileSearch />}
+      {!showForm && (
+        <UnifiedSearchBar
+          searchTerm={searchTerm}
+          onSearch={setSearchTerm}
+          onClear={() => {
+            setFilters({
+              status: [],
+              dateRange: { start: null, end: null }
+            });
+          }}
+          placeholder="Buscar por número o carátula..."
+        />
+      )}
 
       {showForm ? (
         <div className="bg-white shadow rounded-lg p-6">

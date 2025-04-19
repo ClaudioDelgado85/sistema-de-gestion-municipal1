@@ -18,23 +18,6 @@
       "updated_at": "2025-03-20T00:05:53.983Z"
     },
     {
-      "id": "0a5dea9c-7bca-40c9-aba4-b338a86ec660",
-      "fecha": "2025-03-19",
-      "tipo_acta": "intimacion",
-      "numero_acta": "0001-0000222",
-      "plazo": "2025-03-20",
-      "infractor_nombre": "tio gildo",
-      "infractor_dni": "34",
-      "infractor_domicilio": "formossa",
-      "descripcion_falta": "operativo",
-      "observaciones": "se completo",
-      "estado": "completada",
-      "expediente_id": null,
-      "created_by": 1,
-      "created_at": "2025-03-19T01:18:40.662Z",
-      "updated_at": "2025-03-20T00:06:01.806Z"
-    },
-    {
       "id": "43b527f3-8452-462a-8140-647193546b90",
       "fecha": "2025-03-19",
       "tipo_acta": "intimacion",
@@ -61,12 +44,12 @@
       "infractor_dni": "111",
       "infractor_domicilio": "en la semana",
       "descripcion_falta": "por ser muy lunes",
-      "observaciones": null,
-      "estado": "pendiente",
+      "observaciones": "listo",
+      "estado": "completada",
       "expediente_id": null,
       "created_by": 1,
       "created_at": "2025-03-24T11:47:23.668Z",
-      "updated_at": "2025-03-24T11:47:23.668Z"
+      "updated_at": "2025-04-16T23:10:53.342Z"
     },
     {
       "id": "4daf27ad-7327-4996-8285-cf2969e12042",
@@ -78,12 +61,29 @@
       "infractor_dni": "123321",
       "infractor_domicilio": "en cualquier lado",
       "descripcion_falta": "por ser muy estrecho",
+      "observaciones": "listo",
+      "estado": "completada",
+      "expediente_id": null,
+      "created_by": 1,
+      "created_at": "2025-03-24T14:11:01.542Z",
+      "updated_at": "2025-04-16T23:10:59.985Z"
+    },
+    {
+      "id": "c90335e9-e4b7-4e50-a558-77ae2ca462f6",
+      "fecha": "2025-04-18",
+      "tipo_acta": "intimacion",
+      "numero_acta": "111-01",
+      "plazo": "2025-04-19",
+      "infractor_nombre": "piccolo",
+      "infractor_dni": "12",
+      "infractor_domicilio": "namek",
+      "descripcion_falta": "por ser muy verde",
       "observaciones": null,
       "estado": "pendiente",
       "expediente_id": null,
       "created_by": 1,
-      "created_at": "2025-03-24T14:11:01.542Z",
-      "updated_at": "2025-03-24T14:11:01.542Z"
+      "created_at": "2025-04-18T22:38:50.147Z",
+      "updated_at": "2025-04-18T22:38:50.147Z"
     }
   ]
 }

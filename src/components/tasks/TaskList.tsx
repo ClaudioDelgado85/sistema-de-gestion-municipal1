@@ -106,7 +106,7 @@ interface DeleteDialogProps {
   taskId: number;
 }
 
-function DeleteDialog({ isOpen, onClose, onConfirm, taskId }: DeleteDialogProps) {
+function DeleteDialog({ isOpen, onClose, onConfirm }: DeleteDialogProps) {
   if (!isOpen) return null;
 
   return (
@@ -160,22 +160,10 @@ function DeleteDialog({ isOpen, onClose, onConfirm, taskId }: DeleteDialogProps)
 }
 
 function TaskList({ onEdit, onDelete }: TaskListProps) {
-  const { filters, sortConfig, setSortConfig, updateTaskStatus } = useTaskStore();
-  
-  const filteredTasks = useTaskStore((state) => 
-    state.tasks.filter((task) => {
-      if (filters.status.length && !filters.status.includes(task.estado)) return false;
-      if (filters.type.length && !filters.type.includes(task.tipo_acta)) return false;
-      
-      if (filters.dateRange.start || filters.dateRange.end) {
-        const taskDate = new Date(task.fecha + 'T12:00:00');
-        if (filters.dateRange.start && taskDate < new Date(filters.dateRange.start + 'T00:00:00')) return false;
-        if (filters.dateRange.end && taskDate > new Date(filters.dateRange.end + 'T23:59:59')) return false;
-      }
-      
-      return true;
-    })
-  );
+  const { sortConfig, setSortConfig, updateTaskStatus, getFilteredTasks } = useTaskStore();
+
+  // Usar la función getFilteredTasks del store para obtener las tareas filtradas
+  const filteredTasks = useTaskStore(getFilteredTasks);
 
   const [statusDialogState, setStatusDialogState] = useState<{
     isOpen: boolean;
@@ -183,7 +171,7 @@ function TaskList({ onEdit, onDelete }: TaskListProps) {
     fromStatus: TaskStatus;
     toStatus: TaskStatus;
   } | null>(null);
-  
+
   const [deleteDialogState, setDeleteDialogState] = useState<{
     isOpen: boolean;
     taskId: number;
@@ -192,31 +180,31 @@ function TaskList({ onEdit, onDelete }: TaskListProps) {
   const handleSort = (key: keyof Task) => {
     setSortConfig({
       key,
-      direction: 
-        sortConfig.key === key && sortConfig.direction === 'asc' 
-          ? 'desc' 
+      direction:
+        sortConfig.key === key && sortConfig.direction === 'asc'
+          ? 'desc'
           : 'asc',
     });
   };
 
   const sortedTasks = React.useMemo(() => {
     if (!sortConfig.key) return filteredTasks;
-    
+
     return [...filteredTasks].sort((a, b) => {
       const aValue = a[sortConfig.key as keyof Task];
       const bValue = b[sortConfig.key as keyof Task];
-      
+
       if (aValue === undefined && bValue === undefined) return 0;
       if (aValue === undefined) return 1;
       if (bValue === undefined) return -1;
-      
+
       if (sortConfig.key === 'fecha' || sortConfig.key === 'plazo') {
         const aDate = aValue ? new Date(aValue as string).getTime() : 0;
         const bDate = bValue ? new Date(bValue as string).getTime() : 0;
         return sortConfig.direction === 'asc' ? aDate - bDate : bDate - aDate;
       }
-      
-      return sortConfig.direction === 'asc' 
+
+      return sortConfig.direction === 'asc'
         ? String(aValue).localeCompare(String(bValue))
         : String(bValue).localeCompare(String(aValue));
     });
@@ -239,20 +227,20 @@ function TaskList({ onEdit, onDelete }: TaskListProps) {
       newStatus: statusDialogState.toStatus,
       observaciones
     });
-    
+
     setStatusDialogState(null);
   };
-  
+
   const handleDelete = (taskId: number) => {
     setDeleteDialogState({
       isOpen: true,
       taskId
     });
   };
-  
+
   const handleDeleteConfirm = async () => {
     if (!deleteDialogState) return;
-    
+
     try {
       await onDelete(deleteDialogState.taskId);
       setDeleteDialogState(null);
@@ -307,9 +295,31 @@ function TaskList({ onEdit, onDelete }: TaskListProps) {
               <td className="px-6 py-4 whitespace-nowrap"><span className={cn('px-2 inline-flex text-xs leading-5 font-semibold rounded-full', statusColors[task.estado])}>{task.estado}</span></td>
               <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
                 <div className="flex justify-end space-x-2">
-                  <button onClick={() => onEdit(task)} className="text-indigo-600 hover:text-indigo-900" title="Editar"><Edit className="h-5 w-5" /></button>
-                  {task.estado === 'pendiente' && (<button onClick={() => handleStatusChange(task.id, task.estado, 'completada')} className="text-green-600 hover:text-green-900" title="Completar"><Clock className="h-5 w-5" /></button>)}
-                  <button onClick={() => handleDelete(task.id)} className="text-red-600 hover:text-red-900" title="Eliminar"><Trash2 className="h-5 w-5" /></button>
+                  <button
+                    onClick={() => onEdit(task)}
+                    className="group relative text-indigo-600 hover:text-indigo-900"
+                  >
+                    <Edit className="h-5 w-5" />
+                    <span className="invisible group-hover:visible absolute -top-8 left-1/2 -translate-x-1/2 px-2 py-1 bg-gray-800 text-white text-xs rounded">
+                      Editar tarea
+                    </span>
+                  </button>
+                  {task.estado === 'pendiente' && (
+                    <button
+                      onClick={() => handleStatusChange(task.id, task.estado, 'completada')}
+                      className="text-green-600 hover:text-green-900"
+                      title="Completar"
+                    >
+                      <Clock className="h-5 w-5" />
+                    </button>
+                  )}
+                  <button
+                    onClick={() => handleDelete(task.id)}
+                    className="text-red-600 hover:text-red-900"
+                    title="Eliminar"
+                  >
+                    <Trash2 className="h-5 w-5" />
+                  </button>
                 </div>
               </td>
             </tr>

@@ -18,9 +18,9 @@ function FileForm({ onSubmit, onCancel, initialData }: FileFormProps) {
     },
   });
 
-  const onFormSubmit = async (data: FileFormData) => {
+  const onFormSubmit = (data: FileFormData) => {
     try {
-      await onSubmit(data);
+      onSubmit(data);
     } catch (error) {
       console.error('Error en el formulario:', error);
     }
@@ -46,11 +46,15 @@ function FileForm({ onSubmit, onCancel, initialData }: FileFormProps) {
         <div>
           <label className="block text-sm font-medium text-gray-700">
             Número de Expediente
+            <span className="text-red-500">*</span>
           </label>
           <input
             type="text"
             {...register('numeroExpediente', { required: 'El número de expediente es requerido' })}
             className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 pl-3"
+            placeholder="Ej: 001-M-2024"
+            autoComplete="off"
+            autoFocus
           />
           {errors.numeroExpediente && (
             <p className="mt-1 text-sm text-red-600">{errors.numeroExpediente.message}</p>
@@ -65,7 +69,9 @@ function FileForm({ onSubmit, onCancel, initialData }: FileFormProps) {
             type="text"
             {...register('caratula', { required: 'La carátula es requerida' })}
             className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 pl-3"
-          />
+            placeholder="Ej: juan perez s/reempadronamiento"
+            autoComplete="off"
+/>
           {errors.caratula && (
             <p className="mt-1 text-sm text-red-600">{errors.caratula.message}</p>
           )}
@@ -90,6 +96,7 @@ function FileForm({ onSubmit, onCancel, initialData }: FileFormProps) {
             type="text"
             {...register('destino')}
             className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 pl-3"
+          placeholder="Ej: direccion de comercio"
           />
         </div>
 
@@ -115,7 +122,7 @@ function FileForm({ onSubmit, onCancel, initialData }: FileFormProps) {
         </button>
         <button
           type="submit"
-          className="px-4 py-2 text-sm font-medium text-white bg-indigo-600 border border-transparent rounded-md shadow-sm hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
+          className="px-4 py-2 text-sm font-medium text-white bg-primary border border-transparent rounded-md shadow-sm hover:bg-opacity-90 focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2"
         >
           {initialData ? 'Actualizar' : 'Crear'}
         </button>

@@ -20,9 +20,11 @@ interface TaskState {
   tasks: Task[];
   filters: TaskFilters;
   sortConfig: SortConfig;
+  searchTerm: string;
   isLoading: boolean;
   error: string | null;
   setFilters: (filters: Partial<TaskFilters>) => void;
+  setSearchTerm: (term: string) => void;
   setSortConfig: (config: SortConfig) => void;
   fetchTasks: () => Promise<void>;
   addTask: (task: TaskFormData) => Promise<void>;
@@ -33,6 +35,7 @@ interface TaskState {
     newStatus: TaskStatus;
     observaciones: string;
   }) => Promise<void>;
+  getFilteredTasks: () => Task[];
 }
 
 const initialFilters: TaskFilters = {
@@ -44,10 +47,11 @@ const initialFilters: TaskFilters = {
   },
 };
 
-export const useTaskStore = create<TaskState>((set) => ({
+export const useTaskStore = create<TaskState>((set, get) => ({
   tasks: [],
   filters: initialFilters,
   sortConfig: { key: null, direction: 'asc' },
+  searchTerm: '',
   isLoading: false,
   error: null,
 
@@ -55,6 +59,9 @@ export const useTaskStore = create<TaskState>((set) => ({
     set((state) => ({
       filters: { ...state.filters, ...newFilters },
     })),
+
+  setSearchTerm: (term) =>
+    set({ searchTerm: term }),
 
   setSortConfig: (config) =>
     set(() => ({
@@ -183,11 +190,55 @@ export const useTaskStore = create<TaskState>((set) => ({
       }));
     } catch (error) {
       console.error('Error al actualizar estado:', error);
-      set({ 
-        error: (error as Error).message, 
-        isLoading: false 
+      set({
+        error: (error as Error).message,
+        isLoading: false
       });
       throw error;
     }
+  },
+
+  getFilteredTasks: () => {
+    const { tasks, filters, searchTerm } = get();
+
+    // Aplicar filtros
+    let filteredTasks = [...tasks];
+
+    // Filtrar por estado
+    if (filters.status.length > 0) {
+      filteredTasks = filteredTasks.filter(task =>
+        filters.status.includes(task.estado)
+      );
+    }
+
+    // Filtrar por tipo
+    if (filters.type.length > 0) {
+      filteredTasks = filteredTasks.filter(task =>
+        filters.type.includes(task.tipo_acta)
+      );
+    }
+
+    // Filtrar por rango de fechas
+    if (filters.dateRange.start) {
+      const startDate = new Date(filters.dateRange.start + 'T00:00:00');
+      filteredTasks = filteredTasks.filter(task => {
+        const taskDate = new Date(task.fecha.includes('T') ? task.fecha : `${task.fecha}T12:00:00`);
+        return taskDate >= startDate;
+      });
+    }
+
+    // Aplicar búsqueda por término
+    if (searchTerm) {
+      const searchLower = searchTerm.toLowerCase();
+      filteredTasks = filteredTasks.filter(task =>
+        (task.numero_acta?.toLowerCase() || '').includes(searchLower) ||
+        (task.infractor_nombre?.toLowerCase() || '').includes(searchLower) ||
+        (task.descripcion_falta?.toLowerCase() || '').includes(searchLower) ||
+        (task.infractor_dni?.toLowerCase() || '').includes(searchLower) ||
+        (task.observaciones?.toLowerCase() || '').includes(searchLower)
+      );
+    }
+
+    return filteredTasks;
   },
 }));

@@ -2,6 +2,7 @@ import React from 'react';
 import { useAuthStore } from '../store/auth';
 import NotificationBell from './notifications/NotificationBell';
 import ThemeToggle from './ThemeToggle';
+import ThemeCustomizer from './ThemeCustomizer';
 
 function Navbar() {
   const user = useAuthStore((state) => state.user);
@@ -16,6 +17,7 @@ function Navbar() {
             </h1>
           </div>
           <div className="flex items-center gap-4">
+            <ThemeCustomizer />
             <ThemeToggle />
             <NotificationBell />
             <div className="flex items-center">

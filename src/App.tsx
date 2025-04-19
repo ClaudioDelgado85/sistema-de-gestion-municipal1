@@ -9,12 +9,14 @@ import Tasks from './pages/Tasks';
 import Files from './pages/Files';
 import OtherActivities from './pages/OtherActivities';
 import ProtectedRoute from './components/ProtectedRoute';
+import ThemeStyles from './components/ThemeCustomizer/ThemeStyles';
 
 const queryClient = new QueryClient();
 
 function App() {
   return (
     <ThemeProvider>
+      <ThemeStyles />
       <QueryClientProvider client={queryClient}>
         <Router>
           <Routes>
