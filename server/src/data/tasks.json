@@ -78,12 +78,12 @@
       "infractor_dni": "12",
       "infractor_domicilio": "namek",
       "descripcion_falta": "por ser muy verde",
-      "observaciones": null,
-      "estado": "pendiente",
+      "observaciones": "Tarea marcada automáticamente como vencida",
+      "estado": "vencida",
       "expediente_id": null,
       "created_by": 1,
       "created_at": "2025-04-18T22:38:50.147Z",
-      "updated_at": "2025-04-18T22:38:50.147Z"
+      "updated_at": "2025-04-20T19:57:15.879Z"
     },
     {
       "id": "2b2347fe-b0b0-418b-b2de-f92944a2dd88",
@@ -95,12 +95,12 @@
       "infractor_dni": "123",
       "infractor_domicilio": "no tiene",
       "descripcion_falta": "por ser muy rosado",
-      "observaciones": null,
-      "estado": "pendiente",
+      "observaciones": "completado",
+      "estado": "completada",
       "expediente_id": null,
       "created_by": 1,
       "created_at": "2025-04-19T00:21:46.376Z",
-      "updated_at": "2025-04-19T00:21:46.376Z"
+      "updated_at": "2025-04-20T20:03:36.111Z"
     },
     {
       "id": "b13f6c72-c325-4c15-827a-cd761c367bbd",
@@ -112,12 +112,12 @@
       "infractor_dni": "345",
       "infractor_domicilio": "no tiene",
       "descripcion_falta": "por absorver a 18",
-      "observaciones": null,
-      "estado": "pendiente",
+      "observaciones": "Tarea marcada automáticamente como vencida",
+      "estado": "vencida",
       "expediente_id": null,
       "created_by": 1,
       "created_at": "2025-04-19T00:23:25.275Z",
-      "updated_at": "2025-04-19T00:23:25.275Z"
+      "updated_at": "2025-04-22T22:24:36.734Z"
     },
     {
       "id": "039b01ce-18f2-442c-b5ed-e73a98854e36",
@@ -129,12 +129,12 @@
       "infractor_dni": "333",
       "infractor_domicilio": "en la base de ejercito rojo",
       "descripcion_falta": "por ser androide",
-      "observaciones": null,
-      "estado": "pendiente",
+      "observaciones": "completado",
+      "estado": "completada",
       "expediente_id": null,
       "created_by": 1,
       "created_at": "2025-04-19T00:24:45.095Z",
-      "updated_at": "2025-04-19T00:24:45.095Z"
+      "updated_at": "2025-04-20T20:56:35.780Z"
     },
     {
       "id": "d3ddd2f7-6f20-4561-a277-9e620726312c",
@@ -146,12 +146,12 @@
       "infractor_dni": "543",
       "infractor_domicilio": "la luna",
       "descripcion_falta": "por comer mucho ajo",
-      "observaciones": null,
-      "estado": "pendiente",
+      "observaciones": "completado",
+      "estado": "completada",
       "expediente_id": null,
       "created_by": 1,
       "created_at": "2025-04-19T00:26:39.865Z",
-      "updated_at": "2025-04-19T00:26:39.865Z"
+      "updated_at": "2025-04-20T20:56:47.953Z"
     },
     {
       "id": "b4fe54dc-f9ba-4cd4-ac8e-3adf340640fd",
@@ -163,12 +163,12 @@
       "infractor_dni": "512",
       "infractor_domicilio": "planeta veggito",
       "descripcion_falta": "por ser el mas fuerte",
-      "observaciones": null,
-      "estado": "pendiente",
+      "observaciones": "Tarea marcada automáticamente como vencida",
+      "estado": "vencida",
       "expediente_id": null,
       "created_by": 1,
       "created_at": "2025-04-19T00:28:02.061Z",
-      "updated_at": "2025-04-19T00:28:02.061Z"
+      "updated_at": "2025-04-22T22:24:36.472Z"
     },
     {
       "id": "26e301cb-719c-41cc-923d-a6e5d44fa57c",
@@ -180,12 +180,12 @@
       "infractor_dni": "214",
       "infractor_domicilio": "kame house",
       "descripcion_falta": "por ser muy pelado",
-      "observaciones": null,
-      "estado": "pendiente",
+      "observaciones": "completado",
+      "estado": "completada",
       "expediente_id": null,
       "created_by": 1,
       "created_at": "2025-04-19T00:29:07.278Z",
-      "updated_at": "2025-04-19T00:29:07.278Z"
+      "updated_at": "2025-04-20T20:57:03.979Z"
     }
   ]
 }

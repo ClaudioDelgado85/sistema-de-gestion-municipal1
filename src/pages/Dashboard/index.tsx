@@ -17,8 +17,8 @@ function Dashboard() {
   }, [fetchTasks, fetchFiles]);
 
   return (
-    <div className="space-y-6 p-6">
-      <div className="flex justify-between items-center">
+    <div className="space-y-6 p-6 bg-gray-50">
+      <div className="flex justify-between items-center bg-white p-6 rounded-lg shadow-sm">
         <div>
           <h2 className="text-2xl font-bold text-gray-900">Panel de Control</h2>
           <p className="mt-1 text-sm text-gray-500">
@@ -28,24 +28,33 @@ function Dashboard() {
         <DailyActivitiesReportButton />
       </div>
 
-      {/* Resumen de estados de tareas */}
+      {/* Primera fila: KPIs principales */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        <div>
-          <h3 className="text-lg font-semibold mb-4">Resumen de Tareas</h3>
+        <div className="bg-white p-6 rounded-lg shadow-sm">
+          <h3 className="text-lg font-semibold mb-4 text-gray-800 border-b pb-2">
+            Resumen de Tareas
+          </h3>
           <TaskSummary />
         </div>
-        <div>
-          <h3 className="text-lg font-semibold mb-4">Resumen de Expedientes</h3>
+        <div className="bg-white p-6 rounded-lg shadow-sm">
+          <h3 className="text-lg font-semibold mb-4 text-gray-800 border-b pb-2">
+            Resumen de Expedientes
+          </h3>
           <FilesAnalysis />
         </div>
       </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        {/* Gráfico de distribución de tareas */}
-        <TasksOverview />
+      {/* Segunda fila: Gráficos y Tareas próximas */}
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        {/* Gráfico de distribución de tareas - 2/3 del ancho */}
+        <div className="lg:col-span-2">
+          <TasksOverview />
+        </div>
         
-        {/* Tareas próximas a vencer */}
-        <UpcomingTasks />
+        {/* Tareas próximas - 1/3 del ancho */}
+        <div className="lg:col-span-1">
+          <UpcomingTasks />
+        </div>
       </div>
     </div>
   );

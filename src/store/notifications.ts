@@ -5,11 +5,13 @@ interface NotificationState {
   notifications: Notification[];
   preferences: NotificationPreferences;
   unreadCount: number;
+  notifiedTaskIds: Set<string>;
   addNotification: (notification: Omit<Notification, 'id' | 'status' | 'createdAt'>) => void;
   markAsRead: (id: string) => void;
   markAllAsRead: () => void;
   removeNotification: (id: string) => void;
   updatePreferences: (preferences: Partial<NotificationPreferences>) => void;
+  addNotifiedTaskId: (taskId: string) => void;
 }
 
 const DEFAULT_PREFERENCES: NotificationPreferences = {
@@ -24,6 +26,7 @@ export const useNotificationStore = create<NotificationState>((set) => ({
   notifications: [],
   preferences: DEFAULT_PREFERENCES,
   unreadCount: 0,
+  notifiedTaskIds: new Set<string>(),
   
   addNotification: (notification) => set((state) => {
     const newNotification: Notification = {
@@ -38,6 +41,11 @@ export const useNotificationStore = create<NotificationState>((set) => ({
       unreadCount: state.unreadCount + 1,
     };
   }),
+  
+  addNotifiedTaskId: (taskId: string) => 
+    set((state) => ({
+      notifiedTaskIds: new Set([...state.notifiedTaskIds, taskId])
+    })),
   
   markAsRead: (id) => set((state) => ({
     notifications: state.notifications.map((notification) =>

@@ -3,6 +3,7 @@ import { useTaskStore } from '../../../store/tasks';
 
 export const taskStatuses = [
   { value: 'pendiente', label: 'Pendiente' },
+  { value: 'en_progreso', label: 'En Progreso' },
   { value: 'completada', label: 'Completada' },
   { value: 'vencida', label: 'Vencida' },
 ] as const;

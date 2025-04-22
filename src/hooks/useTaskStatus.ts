@@ -1,64 +1,65 @@
-import { useEffect, useRef } from 'react';
+import { useEffect } from 'react';
 import { Task } from '../types/task';
 import { isAfter, parseISO } from 'date-fns';
 import { useTaskStore } from '../store/tasks';
 import useNotifications from './useNotifications';
 import { createTaskNotification } from '../utils/notifications';
+import { useNotificationStore } from '../store/notifications';
 
 export function useTaskStatus(tasks: Task[]) {
   const updateTaskStatus = useTaskStore((state) => state.updateTaskStatus);
   const { notify } = useNotifications();
-  const notifiedTasksRef = useRef<Set<string>>(new Set());
+  const { notifiedTaskIds, addNotifiedTaskId } = useNotificationStore();
 
   useEffect(() => {
-    // No hacer nada si no hay tareas
     if (!tasks || tasks.length === 0) return;
 
-    const checkTaskStatuses = () => {
+    const checkTaskStatuses = async () => {
       const now = new Date();
       
-      tasks.forEach((task) => {
-        // Verificar que la tarea tenga todos los campos necesarios
-        if (!task || !task.id || !task.estado || !task.plazo) return;
-
-        if (
+      // Procesar todas las tareas vencidas en paralelo
+      const updatePromises = tasks
+        .filter(task => 
+          task && 
+          task.id && 
           task.estado === 'pendiente' && 
-          !notifiedTasksRef.current.has(task.id.toString())
-        ) {
-          const deadlineDate = parseISO(task.plazo);
+          task.plazo && 
+          isAfter(now, parseISO(task.plazo)) &&
+          !notifiedTaskIds.has(task.id.toString())
+        )
+        .map(async (task) => {
+          const taskIdStr = task.id.toString();
           
-          if (isAfter(now, deadlineDate)) {
-            try {
-              // Notificar que la tarea está retrasada
-              notify(createTaskNotification(
-                task,
-                'warning',
-                'Tarea Retrasada'
-              ));
-              
-              notifiedTasksRef.current.add(task.id.toString());
-            } catch (error) {
-              console.error('Error al crear notificación:', error);
-            }
+          try {
+            await updateTaskStatus({
+              taskId: task.id,
+              newStatus: 'vencida',
+              observaciones: 'Tarea marcada automáticamente como vencida'
+            });
+
+            notify(createTaskNotification(
+              task,
+              'warning',
+              'Tarea Vencida'
+            ));
+            
+            addNotifiedTaskId(taskIdStr);
+          } catch (error) {
+            console.error(`Error procesando tarea ${taskIdStr}:`, error);
           }
-        }
-      });
+        });
+
+      await Promise.all(updatePromises);
     };
 
+    // Ejecutar la verificación inicial
     checkTaskStatuses();
     
-    let timeoutId: number;
-    const scheduleNextCheck = () => {
-      timeoutId = window.setTimeout(() => {
-        checkTaskStatuses();
-        scheduleNextCheck();
-      }, 60 * 60 * 1000); // Verificar cada hora
-    };
-
-    scheduleNextCheck();
+    // Configurar el intervalo para verificaciones posteriores
+    const intervalId = setInterval(checkTaskStatuses, 60 * 60 * 1000); // Cada hora
 
     return () => {
-      window.clearTimeout(timeoutId);
+      clearInterval(intervalId);
     };
-  }, [tasks, updateTaskStatus, notify]);
+  }, [tasks, notifiedTaskIds]);
 }

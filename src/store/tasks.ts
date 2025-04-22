@@ -154,46 +154,28 @@ export const useTaskStore = create<TaskState>((set, get) => ({
   },
 
   updateTaskStatus: async ({ taskId, newStatus, observaciones }) => {
-    set({ isLoading: true, error: null });
     try {
-      // Encontrar la tarea actual en el estado
+      // Verificar si la tarea ya está en el estado deseado
       const currentTask = useTaskStore.getState().tasks.find(t => t.id === taskId);
-      if (!currentTask) {
-        throw new Error('Tarea no encontrada');
+      if (!currentTask || currentTask.estado === newStatus) {
+        return;
       }
 
-      // Crear un objeto TaskFormData con los datos actuales y el nuevo estado
       const updateData: TaskFormData = {
-        fecha: currentTask.fecha,
-        tipo_acta: currentTask.tipo_acta,
-        numero_acta: currentTask.numero_acta,
-        plazo: currentTask.plazo,
-        infractor_nombre: currentTask.infractor_nombre,
-        infractor_dni: currentTask.infractor_dni,
-        infractor_domicilio: currentTask.infractor_domicilio,
-        descripcion_falta: currentTask.descripcion_falta,
-        observaciones,
+        ...currentTask,
         estado: newStatus,
-        expediente_id: currentTask.expediente_id
+        observaciones
       };
 
-      // Actualizar la tarea
       const updatedTask = await taskService.update(taskId, updateData);
 
-      // Actualizar el estado local
       set((state) => ({
         tasks: state.tasks.map((t) =>
           t.id === taskId ? { ...t, ...updatedTask } : t
-        ),
-        isLoading: false,
-        error: null
+        )
       }));
     } catch (error) {
       console.error('Error al actualizar estado:', error);
-      set({
-        error: (error as Error).message,
-        isLoading: false
-      });
       throw error;
     }
   },

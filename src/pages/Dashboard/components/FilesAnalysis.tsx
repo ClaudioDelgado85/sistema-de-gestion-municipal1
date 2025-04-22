@@ -1,6 +1,6 @@
 import { useFileStore } from '../../../store/files';
 import { differenceInDays, parseISO } from 'date-fns';
-import { AlertTriangle, Clock, CheckCircle2, AlertCircle } from 'lucide-react';
+import { AlertTriangle, Clock, CheckCircle2, AlertCircle, FileText } from 'lucide-react';
 
 interface FileAnalysis {
   total: number;
@@ -56,67 +56,89 @@ const FilesAnalysis = () => {
 
   return (
     <div className="space-y-6">
-      {/* Resumen de estados */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-        <div className="bg-blue-50 p-4 rounded-lg shadow-sm">
-          <div className="flex items-center justify-between">
-            <div>
-              <p className="text-sm font-medium text-gray-600">Total Expedientes</p>
-              <p className="text-2xl font-semibold text-blue-600">
-                {analysis.total}
-              </p>
+        <div className="relative overflow-hidden bg-blue-50 rounded-lg border border-blue-200 transition-all duration-300 hover:shadow-md">
+          <div className="p-4">
+            <div className="flex items-center justify-between">
+              <div className="flex-1">
+                <h4 className="text-sm font-medium text-gray-600">Total</h4>
+                <div className="mt-2 flex items-baseline">
+                  <p className="text-2xl font-semibold text-blue-600">
+                    {analysis.total}
+                  </p>
+                  <p className="ml-2 text-xs text-gray-500">En sistema</p>
+                </div>
+              </div>
+              <div className="p-2 rounded-full bg-blue-50">
+                <FileText className="h-6 w-6 text-blue-600" />
+              </div>
             </div>
-            <Clock className="h-8 w-8 text-blue-600" />
           </div>
+          <div className="absolute bottom-0 left-0 right-0 h-1 bg-blue-600 opacity-20"></div>
         </div>
-        <div className="bg-yellow-50 p-4 rounded-lg shadow-sm">
-          <div className="flex items-center justify-between">
-            <div>
-              <p className="text-sm font-medium text-gray-600">Pendientes</p>
-              <p className="text-2xl font-semibold text-yellow-600">
-                {analysis.pendientes}
-              </p>
+
+        <div className="relative overflow-hidden bg-yellow-50 rounded-lg border border-yellow-200 transition-all duration-300 hover:shadow-md">
+          <div className="p-4">
+            <div className="flex items-center justify-between">
+              <div className="flex-1">
+                <h4 className="text-sm font-medium text-gray-600">Pendientes</h4>
+                <div className="mt-2 flex items-baseline">
+                  <p className="text-2xl font-semibold text-yellow-600">
+                    {analysis.pendientes}
+                  </p>
+                  <p className="ml-2 text-xs text-gray-500">En proceso</p>
+                </div>
+              </div>
+              <div className="p-2 rounded-full bg-yellow-50">
+                <Clock className="h-6 w-6 text-yellow-600" />
+              </div>
             </div>
-            <AlertCircle className="h-8 w-8 text-yellow-600" />
           </div>
+          <div className="absolute bottom-0 left-0 right-0 h-1 bg-yellow-600 opacity-20"></div>
         </div>
-        <div className="bg-green-50 p-4 rounded-lg shadow-sm">
-          <div className="flex items-center justify-between">
-            <div>
-              <p className="text-sm font-medium text-gray-600">Completados</p>
-              <p className="text-2xl font-semibold text-green-600">
-                {analysis.completados}
-              </p>
+
+        <div className="relative overflow-hidden bg-green-50 rounded-lg border border-green-200 transition-all duration-300 hover:shadow-md">
+          <div className="p-4">
+            <div className="flex items-center justify-between">
+              <div className="flex-1">
+                <h4 className="text-sm font-medium text-gray-600">Completados</h4>
+                <div className="mt-2 flex items-baseline">
+                  <p className="text-2xl font-semibold text-green-600">
+                    {analysis.completados}
+                  </p>
+                  <p className="ml-2 text-xs text-gray-500">Finalizados</p>
+                </div>
+              </div>
+              <div className="p-2 rounded-full bg-green-50">
+                <CheckCircle2 className="h-6 w-6 text-green-600" />
+              </div>
             </div>
-            <CheckCircle2 className="h-8 w-8 text-green-600" />
           </div>
+          <div className="absolute bottom-0 left-0 right-0 h-1 bg-green-600 opacity-20"></div>
         </div>
       </div>
 
-      {/* Expedientes sin movimiento */}
+      {/* Lista de expedientes sin movimiento */}
       {analysis.expedientesSinMovimiento.length > 0 && (
-        <div className="bg-white p-4 rounded-lg shadow-sm">
-          <div className="flex items-center gap-2 mb-4">
-            <AlertTriangle className="h-5 w-5 text-yellow-500" />
-            <h3 className="text-lg font-semibold">
-              Expedientes Sin Movimiento (+15 días)
-            </h3>
-          </div>
-          <div className="space-y-3">
+        <div className="mt-6 bg-white rounded-lg border border-gray-200 p-4">
+          <h4 className="text-sm font-medium text-gray-600 mb-3">
+            Expedientes sin movimiento reciente
+          </h4>
+          <div className="space-y-2">
             {analysis.expedientesSinMovimiento.map((exp) => (
               <div
                 key={exp.numeroExpediente}
-                className="flex items-center justify-between p-3 bg-yellow-50 rounded-lg"
+                className="flex items-center justify-between p-2 bg-gray-50 rounded-md"
               >
                 <div>
-                  <p className="font-medium text-gray-900">
-                    Expediente: {exp.numeroExpediente}
+                  <p className="text-sm font-medium text-gray-900">
+                    {exp.numeroExpediente}
                   </p>
-                  <p className="text-sm text-gray-600">{exp.caratula}</p>
+                  <p className="text-xs text-gray-500">{exp.caratula}</p>
                 </div>
-                <div className="text-sm text-yellow-600 font-medium">
-                  {exp.diasSinMovimiento} días sin movimiento
-                </div>
+                <span className="text-xs text-gray-500">
+                  {exp.diasSinMovimiento} días
+                </span>
               </div>
             ))}
           </div>

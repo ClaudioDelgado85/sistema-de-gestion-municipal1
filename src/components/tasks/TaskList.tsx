@@ -16,7 +16,8 @@ const statusColors: Record<TaskStatus, string> = {
   pendiente: 'bg-yellow-100 text-yellow-800',
   en_progreso: 'bg-blue-100 text-blue-800',
   completada: 'bg-green-100 text-green-800',
-  completado: 'bg-green-100 text-green-800'
+  completado: 'bg-green-100 text-green-800',
+  vencida: 'bg-red-100 text-red-800'
 };
 
 interface StatusChangeDialogProps {
@@ -331,21 +332,25 @@ function TaskList({ onEdit, onDelete, highlightTaskId }: TaskListProps) {
                         Editar tarea
                       </span>
                     </button>
-                    {task.estado === 'pendiente' && (
+                    {(task.estado === 'pendiente' || task.estado === 'vencida') && (
                       <button
                         onClick={() => handleStatusChange(task.id, task.estado, 'completada')}
-                        className="text-green-600 hover:text-green-900"
-                        title="Completar"
+                        className="group relative text-green-600 hover:text-green-900"
                       >
                         <Clock className="h-5 w-5" />
+                        <span className="invisible group-hover:visible absolute -top-8 left-1/2 -translate-x-1/2 px-2 py-1 bg-gray-800 text-white text-xs rounded">
+                          {task.estado === 'vencida' ? 'Marcar como completada' : 'Completar'}
+                        </span>
                       </button>
                     )}
                     <button
                       onClick={() => handleDelete(task.id)}
-                      className="text-red-600 hover:text-red-900"
-                      title="Eliminar"
+                      className="group relative text-red-600 hover:text-red-900"
                     >
                       <Trash2 className="h-5 w-5" />
+                      <span className="invisible group-hover:visible absolute -top-8 left-1/2 -translate-x-1/2 px-2 py-1 bg-gray-800 text-white text-xs rounded">
+                        Eliminar tarea
+                      </span>
                     </button>
                   </div>
                 </td>
